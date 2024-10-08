@@ -1,1 +1,18 @@
-spring.application.name=ShoppingMallBoot
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 10
+      driver-class-name: oracle.jdbc.driver.OracleDriver
+      jdbc-url: jdbc:oracle:thin:@129.154.220.177:1521:xe
+      username: scott
+      password: tiger
+  application:
+    name: ShoppingMallBoot
+
+  mvc:
+    view:
+      prefix: /html/
+      suffix: .html
+config:
+  display-count: 12
+  page-num-size: 5

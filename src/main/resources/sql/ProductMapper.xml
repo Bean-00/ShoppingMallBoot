@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.study.shoppingmallboot.domain.product.dao.ProductMapper">
+    <resultMap id="productSelectMap" type="Product">
+        <result property="rowNum" column="row_num" jdbcType="NUMERIC"/>
+        <result property="prodNo" column="prod_no" jdbcType="NUMERIC"/>
+        <result property="prodName" column="prod_name" jdbcType="VARCHAR"/>
+        <result property="prodDetail" column="prod_detail" jdbcType="VARCHAR"/>
+        <result property="manuDate" column="manufacture_day" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="NUMERIC"/>
+        <result property="fileName" column="image_file" jdbcType="VARCHAR"/>
+        <result property="regDate" column="reg_date" jdbcType="DATE"/>
+        <result property="transCode" column="trans_code" jdbcType="NUMERIC"/>
+    </resultMap>
+
+    <delete id="deleteProduct" parameterType="java.lang.Integer">
+        DELETE
+        FROM product
+        WHERE prod_no = #{prodNo}
+    </delete>
+
+    <insert id="insertProduct" parameterType="Product">
+        INSERT
+        INTO product(prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date)
+        VALUES (seq_product_prod_no.nextval,
+                #{prodName:VARCHAR},
+                #{prodDetail:VARCHAR},
+                #{manuDate:VARCHAR},
+                #{price:NUMERIC},
+                #{fileName:VARCHAR},
+                SYSDATE)
+    </insert>
+
+    <select id="getProductByProdNo" parameterType="java.lang.Integer" resultMap="productSelectMap">
+        SELECT *
+        FROM product
+        WHERE prod_no = #{value}
+    </select>
+
+
+    <update id="updateProduct" parameterType="Product">
+        UPDATE product
+        <set>
+            prod_name = #{prodName},
+            prod_detail = #{prodDetail},
+            manufacture_day = #{manuDate},
+            price = #{price},
+            image_file = #{fileName},
+            reg_date = #{regDate}
+        </set>
+        WHERE prod_no = #{prodNo}
+    </update>
+
+    <select id="getProductWithStatusList" parameterType="Search" resultType="ProductStatus">
+        SELECT PT.row_num AS "rowNum",
+        PT.prod_no AS "prodNo",
+        PT.prod_name AS "productName",
+        PT.price AS "price",
+        PT.reg_date AS "regDate",
+        PT.trans_code AS "status",
+        PT.image_file AS "fileName"
+        FROM (select ROW_NUMBER() over (ORDER BY p.PROD_NO) AS row_num,
+        p.prod_no,
+        p.prod_name,
+        p.price,
+        p.reg_date,
+        p.image_file,
+        NVL(t.tran_status_code, 0) AS trans_code
+        FROM product p
+        left outer join transaction t on p.PROD_NO = t.prod_no
+        <if test='searchCondition != null and searchKeyword != null'>
+            <if test='searchCondition == 0 and searchKeyword != ""'>
+                WHERE p.prod_no LIKE '%${searchKeyword}%'
+            </if>
+            <if test='searchCondition == 1 and searchKeyword != ""'>
+                WHERE p.prod_name LIKE '%${searchKeyword}%'
+            </if>
+            <if test='searchCondition == 2 and searchKeyword != ""'>
+                WHERE p.price LIKE '%${searchKeyword}%'
+            </if>
+        </if>
+        ) PT
+        WHERE row_num BETWEEN #{startIndex} AND #{endIndex}
+        ORDER BY row_num
+    </select>
+
+    <select id="getProductNameList" parameterType="String" resultType="String">
+        SELECT
+            prod_name
+        FROM product
+        WHERE prod_name LIKE '${value}%'
+        ORDER BY prod_name
+    </select>
+
+    <select id="getTotalProductCount" parameterType="Search" resultType="int">
+        SELECT COUNT(prod_no) as "totalCount" FROM product
+        <if test="searchCondition != null">
+            <where>
+                <if test='searchCondition == 0 and searchKeyword !="" '>
+                    prod_no LIKE '%${searchKeyword}%'
+                </if>
+                <if test='searchCondition == 1 and searchKeyword !="" '>
+                    prod_name LIKE '%${searchKeyword}%'
+                </if>
+                <if test='searchCondition == 2 and searchKeyword !="" '>
+                    price LIKE '%${searchKeyword}%'
+                </if>
+            </where>
+        </if>
+    </select>
+
+</mapper>

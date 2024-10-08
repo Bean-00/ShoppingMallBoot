@@ -2,12 +2,13 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>home</title>
+    <title>signup</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="icon" href="/images/ShoppingMallFavicon.png">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
@@ -23,20 +24,37 @@
     .nav-item {
         margin-bottom: 30px;
     }
+
+    #search-box {
+        margin-bottom: 30px; /* search-box와 card-box-container 사이 공간 */
+    }
+
+    #card-box-container {
+        margin-top: 30px; /* search-box와 card-box-container 사이 공간 */
+        overflow-y: auto; /* 스크롤 가능하도록 설정 */
+        height: calc(100vh - 350px); /* 높이를 조정해서 겹침 방지 */
+    }
+
+
 </style>
 <body>
-<div class="container-fluid">
+
+<div class="container-fluid" style="height: calc(88vh); margin-top: 10px">
     <nav class="navbar bg-body-tertiary fixed-top">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
                     aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand mx-auto" href="#">Shopping Mall</a>
+            <a class="navbar-brand" href="#">
+                <img src="/images/ShoppingMallLogo.png" alt="" width="103.04" height="44">
+            </a>
             <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar"
                  aria-labelledby="offcanvasNavbarLabel">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Shopping Mall</h5>
+                    <a class="navbar-brand" href="#">
+                        <img src="/images/ShoppingMallLogo.png" alt="" width="103.04" height="44">
+                    </a>
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
@@ -59,7 +77,6 @@
                         <li class="nav-item">
                             <p>회원 관리</p>
                             <a class="nav-link " aria-current="page" href="#">가입 회원 정보 조회</a>
-                            <a class="nav-link " aria-current="page" href="#">구매 이력 조회</a>
                         </li>
                     </ul>
                 </div>
@@ -71,25 +88,276 @@
             </button>
         </div>
     </nav>
+
+    <div id="product-list-area" class="container-xxl container-lg" style="margin-top: 100px; margin-bottom: 40px;">
+
+        <h3 id="product-total-count" class="mx-auto p-2 mb-5" style="font-weight: bold; text-align: center;"></h3>
+
+        <div id="search-box" class="col-xxl-12 col-lg-12 row justify-content-end">
+
+            <div class="col-xxl-2 col-lg-2 justify-content-end d-flex">
+                <select id="filter-select" class="form-select" aria-label="Default select example"
+                        style="height: 100%; width: 6.8vw">
+                    <option selected>상품 상태</option>
+                    <option value="0">판매 중</option>
+                    <option value="1">구매 완료</option>
+                    <option value="2">배송 중</option>
+                    <option value="3">배송 완료</option>
+                </select>
+            </div>
+
+            <div class="col-xxl-2 col-lg-2 justify-content-end d-flex">
+
+                <button type="button" id="sort-low-price-btn"
+                        class="justify-content-start align-items-center d-flex btn btn-outline-secondary"
+                        style="height: 100%; width: 6.8vw">
+                    <a class="nav-link active me-1" aria-current="page" href="#">가격 낮은 순</a>
+                    <i class="bi bi-arrow-down fs-5"></i>
+                </button>
+            </div>
+
+            <div class="col-xxl-4 col-lg-4">
+                <div class="input-group mb-3" style="height: 100%">
+                    <input id="input-low-price" type="number" class="form-control" placeholder="최저 금액">
+                    <span class="input-group-text">~</span>
+                    <input id="input-high-price" type="number" class="form-control" placeholder="최고 금액">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+                </div>
+            </div>
+
+            <div class="col-xxl-4 col-lg-4">
+                <div class="input-group mb-3" style="height: 100%">
+                    <input id="input-keyword" name="searchKeyword" type="text" class="form-control"
+                           aria-label="Text input with dropdown button"
+                           placeholder="원하시는 상품 이름을 검색해주세요" onkeyup="searchProductName()" autocomplete="off">
+                    <ul id="search-bar" class="dropdown-menu" style="margin-top: 53px; width: 355.31px">
+                    </ul>
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="card-box-container" class="container-xxl container-lg overflow-y-scroll">
+
+        </div>
+    </div>
 </div>
 
-<script>
-    $(document).ready(function () {
-        $("#login-btn").hover(
-            () => {
-                $("#login-btn").html(
-                    `<i class="bi bi-door-open fs-5 me-3"></i>
-                 <a class="nav-link active" aria-current="page" href="#">로그인</a>`
-                );
-            },
-            () => {
-                $("#login-btn").html(
-                    `<i class="bi bi-door-closed fs-5 me-3"></i>
-                 <a class="nav-link active" aria-current="page" href="#">로그인</a>`
-                );
-            }
-        );
-    });
-</script>
+<button id="prod-modal-btn" hidden="hidden" data-bs-toggle="modal" data-bs-target="#prod-modal">
+</button>
+<div id="prod-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">상품 상세 조회</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="row">
+                        <label for="prod-num" class="col-md-1 col-sm-6 control-label">상품 번호</label>
+                        <div class="col-md-5 col-sm-6">
+                            <input id="prod-num" type="number" readonly class="form-control">
+                        </div>
+                        <label for="prod-name" class="col-md-1 col-sm-6 control-label">상품 명</label>
+                        <div class="col-md-5 col-sm-6">
+                            <input id="prod-name" type="text" readonly class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label for="prod-detail" class="col-md-1 col-sm-6 control-label">상세 설명</label>
+                        <div class="col-md-11 col-sm-6">
+                            <input id="prod-detail" type="text" readonly class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label for="prod-regDate" class="col-md-1 col-sm-2 control-label">등록 날짜</label>
+                        <div class="col-md-5 col-sm-4">
+                            <input id="prod-regDate" type="date" readonly class="form-control">
+                        </div>
+                        <label for="prod-price" class="col-md-1 col-sm-2 control-label">상품 가격</label>
+                        <div class="col-md-5 col-sm-4">
+                            <input id="prod-price" type="number" readonly class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 16px">
+                        <label for="prod-menuDate" class="col-md-1 col-sm-2 control-label">구매 일자</label>
+                        <div class="col-md-5 col-sm-4">
+                            <input id="prod-menuDate" type="date" readonly class="form-control">
+                        </div>
+                        <label for="prod-fileName" class="col-md-1 col-sm-2 control-label">첨부 파일</label>
+                        <div class="col-md-5 col-sm-4">
+                            <input id="prod-fileName" type="text" readonly class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </body>
+
+<script src="../js/ajax.js"></script>
+<script>
+    let currentPage;
+    const $filterSelect = $("#filter-select");
+    $(document).ready(
+        () => {
+            $("#login-btn").hover(
+                () => $("#login-btn > i").removeClass("bi-door-closed").addClass("bi-door-open"),
+                () => $("#login-btn > i").removeClass("bi-door-open").addClass("bi-door-closed")
+            );
+            currentPage = 1;
+            setProductList(currentPage);
+            currentPage++;
+            $filterSelect.change(
+                () => {
+                    console.log("filterSelect: ", $filterSelect.val())
+                    console.log("!!!!!!!!!!!!")
+                }
+            )
+        }
+    )
+
+    $("#card-box-container").scroll(function () {
+        const $card_box_container = $("#card-box-container");
+        let card_box_scrollTop = $card_box_container.scrollTop();
+        const scrollableHeight = $card_box_container[0].scrollHeight - $card_box_container[0].clientHeight;
+
+        if (Math.abs(card_box_scrollTop - scrollableHeight) <= 1) {
+            appendProductList(currentPage);
+            currentPage++;
+        }
+    })
+
+    const setProductList = (currentPage, searchCondition, searchKeyword) => {
+        let apiAddress = `/api/products/totalCount` + buildProductQueryParam(currentPage, searchCondition, searchKeyword);
+        sendGetAjax(apiAddress, res => {
+            createTotalProductElement(res);
+            sendGetAjax(`/api/products` + buildProductQueryParam(currentPage, searchCondition, searchKeyword), res => {
+                createProductColumnElement(res);
+            })
+        })
+    }
+
+    const appendProductList = (currentPage, searchCondition, searchKeyword) => {
+        let apiAddress = `/api/products` + buildProductQueryParam(currentPage, searchCondition, searchKeyword);
+        sendGetAjax(apiAddress, res => {
+            createProductColumnElement(res);
+        })
+    }
+
+    const buildProductQueryParam = (currentPage, searchCondition, searchKeyword) => {
+        let queryParam = '?currentPage=' + currentPage;
+        if (searchKeyword)
+            queryParam += '&searchCondition=' + searchCondition + "&searchKeyword" + searchKeyword;
+        return queryParam;
+    }
+
+    const createTotalProductElement = (totalCount) => {
+        $("#product-total-count").text("전체 상품 조회 (총 " + totalCount + " 건)");
+    }
+
+    const createProductColumnElement = (res) => {
+
+        const $card_box_container = $("#card-box-container");
+
+        let $card_box_html = currentPage === 1 ? '' : $card_box_container.html();
+        $card_box_html += `<div id="product-card-box" class="row justify-content-evenly" style="padding-top: 30px">`
+            + createProductRowElement(res) + `</div>`;
+        $card_box_container.html($card_box_html);
+    }
+
+    const createProductRowElement = (res) => {
+        let $card_html = '';
+        for (let product of res) {
+            $card_html += `<div id = "product-card" class="card col-xl-4" style="width: 18rem; height: fit-content; margin-bottom: 30px">
+            <span id = "row-num" class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-dark">
+                  ` + product.rowNum + `
+            </span>
+            <div id = "file-name" class="image-box d-flex align-items-center" style="width: 262px; height: 262px">
+                <img src="/images/uploadFiles/` + product.fileName + `" class="card-img-top" alt="/images/uploadFiles/딸기.jpg" >
+            </div>
+            <div class="card-body">
+                <div class="align-content-around">
+                    <h6>상품 상태 <span id = "status" class="badge bg-success rounded-pill">` + product.status + `</span></h6>
+                    <h5 id = "name" class="card-title">` + product.productName + `</h5>
+                    <span id = "price" class="card-text" style="display: flex">` + product.price + `원</span>
+                    <span id = "menu-date" class="card-text" style="display: flex">` + product.regDateString + ` 등록</span>
+                    <a id = "link" href="#" class="btn btn-primary">구매하기</a>
+                </div>
+            </div>
+        </div>`
+        }
+        return $card_html;
+    }
+
+    const viewProductInfo = (prodNo) => {
+        sendGetAjax(`/api/products/` + prodNo, res => {
+            if (!res)
+                return alert("상품 조회에 실패했습니다");
+            console.log("prodNo: ", prodNo)
+            console.log("###", res)
+            $("#prod-modal #prod-num").val(res.prodNo);
+            $("#prod-modal #prod-detail").val(res.prodDetail);
+            $("#prod-modal #prod-fileName").val(res.fileName);
+            $("#prod-modal #prod-menuDate").val(moment(res.menuDate).format('YYYY-MM-DD'));
+            $("#prod-modal #prod-name").val(res.prodName);
+            $("#prod-modal #prod-price").val(res.price);
+            $("#prod-modal #prod-regDate").val(moment(res.regDate).format('YYYY-MM-DD'));
+            $("#prod-modal-btn").click();
+        })
+    }
+
+    const searchProductName = () => {
+        const $input = $("#input-keyword");
+
+        const debouncedGetAjax = _.debounce((keyword) => {
+            sendGetAjax('/api/products/name?searchKeyword=' + keyword, (res) => {
+                let html = '';
+                if (res.length) {
+                    for (let name of res) {
+                        html += createSearchLiElement(name, false);
+                    }
+                    $searchBar.html(html);
+
+                } else {
+                    html += createSearchLiElement('검색 결과가 없습니다.', true);
+                    $searchBar.html(html);
+                }
+                $searchBar.html(html);
+                $searchBar.addClass('show');
+            });
+        }, 300);
+
+        const keyword = $input.val();
+        const $searchBar = $("#search-bar");
+        if (keyword) {
+            debouncedGetAjax(keyword);
+        } else {
+            $searchBar.removeClass('show');
+        }
+    }
+
+    const createSearchLiElement = (value, ignoreClick) => {
+        return '<li><a class="dropdown-item" onclick="setSearchKeyword(\'' + value + '\',' + ignoreClick + ')">' + value + '</a></li>';
+    }
+
+    const setSearchKeyword = (value, ignoreClick) => {
+        if (ignoreClick) return;
+        console.log(value);
+        $("#input-keyword").val(value);
+        $("#search-bar").removeClass('show');
+    }
+
+
+</script>
 </html>
