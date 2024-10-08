@@ -119,20 +119,39 @@
     </select>
 
     <select id="getTotalProductCount" parameterType="Search" resultType="int">
-        SELECT COUNT(prod_no) as "totalCount" FROM product
-        <if test="searchCondition != null">
-            <where>
-                <if test='searchCondition == 0 and searchKeyword !="" '>
-                    prod_no LIKE '%${searchKeyword}%'
-                </if>
-                <if test='searchCondition == 1 and searchKeyword !="" '>
-                    prod_name LIKE '%${searchKeyword}%'
-                </if>
-                <if test='searchCondition == 2 and searchKeyword !="" '>
-                    price LIKE '%${searchKeyword}%'
-                </if>
-            </where>
-        </if>
+        SELECT COUNT(TT.prod_no) as totalCount
+        FROM (
+        SELECT p.prod_no,
+        p.prod_name,
+        p.price,
+        NVL(t.tran_status_code, 0) AS trans_code
+        FROM product p
+        LEFT OUTER JOIN transaction t ON p.prod_no = t.prod_no
+        <where>
+            <if test='searchKeyword != null and searchKeyword != ""'>
+                AND p.prod_name LIKE '%' || #{searchKeyword} || '%'
+            </if>
+            <if test='searchLowPrice != null and searchLowPrice != ""
+                and searchHighPrice != null and searchHighPrice != ""'>
+                AND p.price BETWEEN #{searchLowPrice} AND #{searchHighPrice}
+            </if>
+            <choose>
+                <when test="searchCondition == 0">
+                    AND NVL(t.tran_status_code, 0) = 0
+                </when>
+                <when test="searchCondition == 1">
+                    AND t.tran_status_code = 1
+                </when>
+                <when test="searchCondition == 2">
+                    AND t.tran_status_code = 2
+                </when>
+                <when test="searchCondition >= 3">
+                    AND t.tran_status_code >= 3
+                </when>
+            </choose>
+        </where>
+        ) TT
     </select>
+
 
 </mapper>

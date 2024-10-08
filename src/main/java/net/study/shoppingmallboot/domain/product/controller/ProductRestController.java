@@ -42,13 +42,21 @@ public class ProductRestController {
 
     @GetMapping("/totalCount")
     public ResponseEntity<Integer> getProductTotalCount(@RequestParam(name = "currentPage", required = false, defaultValue = "1") int currentPage,
+                                                        @RequestParam(name = "searchSorting", required = false, defaultValue = "0") String searchSorting,
                                                         @RequestParam(name = "searchKeyword", required = false) String searchKeyword,
-                                                        @RequestParam(name = "searchCondition", required = false) String searchCondition) {
+                                                        @RequestParam(name = "searchCondition", required = false) String searchCondition,
+                                                        @RequestParam(name = "searchLowPrice", required = false) String searchLowPrice,
+                                                        @RequestParam(name = "searchHighPrice", required = false) String searchHighPrice) {
 
         Search search = new Search();
-        search.setSearchCondition(searchCondition);
+        search.setSearchSorting(searchSorting);
         search.setSearchKeyword(searchKeyword);
+        search.setSearchCondition(searchCondition);
+        search.setSearchLowPrice(searchLowPrice);
+        search.setSearchHighPrice(searchHighPrice);
+
         search.setCurrentPage(currentPage);
+
         search.setDisplayCount(this.displayCount);
         search.setPageNumSize(this.pageNumSize);
 

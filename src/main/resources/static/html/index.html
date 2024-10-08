@@ -108,11 +108,11 @@
 
             <div class="col-xxl-2 col-lg-2 justify-content-end d-flex">
 
-                <button type="button" id="sort-low-price-btn"
+                <button type="button" id="price-sorting-btn" onclick="changePriceSortingBtn()"
                         class="justify-content-start align-items-center d-flex btn btn-outline-secondary"
                         style="height: 100%; width: 6.8vw">
-                    <a class="nav-link active me-1" aria-current="page" href="#">가격 낮은 순</a>
-                    <i class="bi bi-arrow-down fs-5"></i>
+                    <a class="nav-link active me-1" aria-current="page" href="#">가격 정렬 안함</a>
+                    <i class="bi fs-5"></i>
                 </button>
             </div>
 
@@ -121,7 +121,7 @@
                     <input id="input-low-price" type="number" class="form-control" placeholder="최저 금액">
                     <span class="input-group-text">~</span>
                     <input id="input-high-price" type="number" class="form-control" placeholder="최고 금액">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="searchProduct()">검색</button>
                 </div>
             </div>
 
@@ -129,7 +129,7 @@
                 <div class="input-group mb-3" style="height: 100%">
                     <input id="input-keyword" name="searchKeyword" type="text" class="form-control"
                            aria-label="Text input with dropdown button"
-                           placeholder="원하시는 상품 이름을 검색해주세요" autocomplete="off"><!-- onkeyup="searchProductName()" --->
+                           placeholder="원하시는 상품 이름을 검색해주세요" autocomplete="off">
                     <ul id="search-bar" class="dropdown-menu" style="margin-top: 53px; width: 355.31px">
                     </ul>
                     <button onclick="searchProduct()" class="btn btn-outline-secondary" type="button"
@@ -210,13 +210,17 @@
 <script src="../js/ajax.js"></script>
 <script>
     let currentPage;
+    let patternState = 0;
     const $filterSelect = $("#filter-select");
     const $searchKeyword = $("#input-keyword");
+    const $priceSortingBtn = $("#price-sorting-btn");
+    const $searchLowPrice = $("#input-low-price");
+    const $searchHighPrice = $("#input-high-price");
 
     $(document).ready(
         () => {
             currentPage = 1;
-            setProductList(currentPage);
+            setProductList(currentPage, "", "", "", "", "");
             currentPage++;
 
             $("#login-btn").hover(
@@ -224,14 +228,44 @@
                 () => $("#login-btn > i").removeClass("bi-door-open").addClass("bi-door-closed")
             );
 
-
         }
     )
 
-    $searchKeyword.focus( () => {
+    const changePriceSortingBtn = () => {
+
+        console.log($priceSortingBtn.val())
+        patternState = (patternState + 1) % 3;
+        console.log("pattern state", patternState);
+
+        switch (patternState) {
+            case 1: {
+                $("#price-sorting-btn > a").text("가격 낮은 순");
+                $("#price-sorting-btn > i").addClass("bi-arrow-down");
+                $priceSortingBtn.val("1");
+                break ;
+            }
+
+            case 2: {
+                $("#price-sorting-btn > i").removeClass("bi-arrow-down");
+                $("#price-sorting-btn > a").text("가격 높은 순");
+                $("#price-sorting-btn > i").addClass("bi-arrow-up");
+                $priceSortingBtn.val("2");
+                break ;
+            }
+
+            default: {
+                $("#price-sorting-btn > a").text("가격 정렬 안함");
+                $("#price-sorting-btn > i").removeClass("bi-arrow-up");
+                $priceSortingBtn.val("0");
+                break ;
+            }
+        }
+    }
+
+    $searchKeyword.focus(() => {
         $(this).on('keyup', () => {
-        if($("#input-keyword").val() !== "")
-            searchProductName()
+            if ($("#input-keyword").val() !== "")
+                searchProductName()
         })
     })
 
@@ -242,10 +276,10 @@
     $filterSelect.change(
         () => {
             if (!["0", "1", "2", "3"].includes($filterSelect.val()))
-                return;
+                setProductList(currentPage, $priceSortingBtn.val(), "", $searchLowPrice.val(), $searchHighPrice.val(), $searchKeyword.val());
             else {
                 currentPage = 1;
-                setProductList(currentPage, null, $filterSelect.val(), null, null, $searchKeyword.val());
+                setProductList(currentPage, "", $filterSelect.val(), "", "", $searchKeyword.val());
             }
 
         }
@@ -258,24 +292,40 @@
 
         if (Math.abs(card_box_scrollTop - scrollableHeight) <= 1) {
             if (["0", "1", "2", "3"].includes($filterSelect.val()))
-                appendProductList(currentPage, null, $filterSelect.val(), null, null, null);
+                appendProductList(currentPage, $priceSortingBtn.val(), $filterSelect.val(), $searchLowPrice.val(), $searchHighPrice.val(), $searchKeyword.val());
             else
-                appendProductList(currentPage);
+                appendProductList(currentPage, $priceSortingBtn.val(), "", $searchLowPrice.val(), $searchHighPrice.val(), $searchKeyword.val());
             currentPage++;
         }
     })
 
     const searchProduct = () => {
         console.log("$searchKeyword: ", $searchKeyword.val());
+        if ($searchLowPrice.val() !== "" && $searchHighPrice.val() === "") {
+            alert("최대 가격도 작성해주세요");
+            return;
+        }
+
+        if ($searchLowPrice.val() === "" && $searchHighPrice.val() !== "") {
+            alert("최소 가격도 작성해주세요");
+            return;
+        }
+
+        if ($searchLowPrice.val() > $searchHighPrice.val()) {
+            alert("최소 가격이 최대 가격보다 클 수 없습니다.");
+            return;
+        }
+
         if (["0", "1", "2", "3"].includes($filterSelect.val()))
-            setProductList(currentPage, null, $filterSelect.val(), null, null, $searchKeyword.val());
+            setProductList(currentPage, $priceSortingBtn.val(), $filterSelect.val(), $searchLowPrice.val(), $searchHighPrice.val(), $searchKeyword.val());
         else {
             currentPage = 1;
-            setProductList(currentPage, null, null, null, null, $searchKeyword.val());
+            setProductList(currentPage, $priceSortingBtn.val(), "", $searchLowPrice.val(), $searchHighPrice.val(), $searchKeyword.val());
         }
     }
 
     const setProductList = (currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword) => {
+        console.log("currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword", currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword);
         let apiAddress = `/api/products/totalCount` + buildProductQueryParam(currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword);
         sendGetAjax(apiAddress, res => {
             createTotalProductElement(res);
