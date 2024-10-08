@@ -129,10 +129,12 @@
                 <div class="input-group mb-3" style="height: 100%">
                     <input id="input-keyword" name="searchKeyword" type="text" class="form-control"
                            aria-label="Text input with dropdown button"
-                           placeholder="원하시는 상품 이름을 검색해주세요" onkeyup="searchProductName()" autocomplete="off">
+                           placeholder="원하시는 상품 이름을 검색해주세요" autocomplete="off"><!-- onkeyup="searchProductName()" --->
                     <ul id="search-bar" class="dropdown-menu" style="margin-top: 53px; width: 355.31px">
                     </ul>
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+                    <button onclick="searchProduct()" class="btn btn-outline-secondary" type="button"
+                            id="button-addon2">검색
+                    </button>
                 </div>
             </div>
         </div>
@@ -209,6 +211,7 @@
 <script>
     let currentPage;
     const $filterSelect = $("#filter-select");
+    const $searchKeyword = $("#input-keyword");
 
     $(document).ready(
         () => {
@@ -225,13 +228,24 @@
         }
     )
 
+    $searchKeyword.focus( () => {
+        $(this).on('keyup', () => {
+        if($("#input-keyword").val() !== "")
+            searchProductName()
+        })
+    })
+
+    $searchKeyword.blur(() => {
+        $("#search-bar").removeClass('show')
+    })
+
     $filterSelect.change(
         () => {
             if (!["0", "1", "2", "3"].includes($filterSelect.val()))
                 return;
             else {
                 currentPage = 1;
-                setProductList(currentPage, null, $filterSelect.val(), null, null, null);
+                setProductList(currentPage, null, $filterSelect.val(), null, null, $searchKeyword.val());
             }
 
         }
@@ -250,6 +264,16 @@
             currentPage++;
         }
     })
+
+    const searchProduct = () => {
+        console.log("$searchKeyword: ", $searchKeyword.val());
+        if (["0", "1", "2", "3"].includes($filterSelect.val()))
+            setProductList(currentPage, null, $filterSelect.val(), null, null, $searchKeyword.val());
+        else {
+            currentPage = 1;
+            setProductList(currentPage, null, null, null, null, $searchKeyword.val());
+        }
+    }
 
     const setProductList = (currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword) => {
         let apiAddress = `/api/products/totalCount` + buildProductQueryParam(currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword);
