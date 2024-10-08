@@ -63,7 +63,17 @@
         PT.reg_date AS "regDate",
         PT.trans_code AS "status",
         PT.image_file AS "fileName"
-        FROM (select ROW_NUMBER() over (ORDER BY p.PROD_NO) AS row_num,
+        <choose>
+            <when test="searchSorting == 0">
+                FROM (select ROW_NUMBER() over (ORDER BY p.PROD_NO) AS row_num,
+            </when>
+            <when test="searchSorting == 1">
+                FROM (select ROW_NUMBER() over (ORDER BY p.PRICE) AS row_num,
+            </when>
+            <when test="searchSorting == 2">
+                FROM (select ROW_NUMBER() over (ORDER BY p.PRICE desc) AS row_num,
+            </when>
+        </choose>
         p.prod_no,
         p.prod_name,
         p.price,
@@ -72,17 +82,29 @@
         NVL(t.tran_status_code, 0) AS trans_code
         FROM product p
         left outer join transaction t on p.PROD_NO = t.prod_no
-        <if test='searchCondition != null and searchKeyword != null'>
-            <if test='searchCondition == 0 and searchKeyword != ""'>
-                WHERE p.prod_no LIKE '%${searchKeyword}%'
+        <where>
+            <if test='searchKeyword != ""'>
+                AND p.prod_name LIKE '%${searchKeyword}%'
             </if>
-            <if test='searchCondition == 1 and searchKeyword != ""'>
-                WHERE p.prod_name LIKE '%${searchKeyword}%'
+            <if test='searchLowPrice != "" and searchLowPrice != null
+               and searchHighPrice != "" and searchHighPrice != null'>
+                AND p.price BETWEEN #{searchLowPrice} AND #{searchHighPrice}
             </if>
-            <if test='searchCondition == 2 and searchKeyword != ""'>
-                WHERE p.price LIKE '%${searchKeyword}%'
-            </if>
-        </if>
+            <choose>
+                <when test="searchCondition == 0">
+                    AND NVL(t.tran_status_code, 0) = 0
+                </when>
+                <when test="searchCondition == 1">
+                    AND t.tran_status_code = 1
+                </when>
+                <when test="searchCondition == 2">
+                    AND t.tran_status_code = 2
+                </when>
+                <when test="searchCondition >= 3">
+                    AND t.tran_status_code >= 3
+                </when>
+            </choose>
+        </where>
         ) PT
         WHERE row_num BETWEEN #{startIndex} AND #{endIndex}
         ORDER BY row_num

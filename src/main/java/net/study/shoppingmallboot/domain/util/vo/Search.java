@@ -13,6 +13,7 @@ import java.util.Objects;
 public class Search {
 	
 	private int currentPage;
+	private String searchSorting;
 	private String searchCondition;
 	private String searchKeyword;
 	private String searchLowPrice;

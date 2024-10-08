@@ -713,18 +713,36 @@ SELECT PT.row_num    AS "rowNum",
        PT.reg_date   AS "regDate",
        PT.trans_code AS "status",
        PT.image_file AS "fileName"
-FROM (select ROW_NUMBER() over (ORDER BY p.price) AS row_num,
+FROM (select ROW_NUMBER() over (ORDER BY p.price desc ) AS row_num,
              p.prod_no,
              p.prod_name,
              p.price,
              p.reg_date,
              p.image_file,
-             NVL(t.tran_status_code, 0)             AS trans_code
+             NVL(t.tran_status_code, 0)                 AS trans_code
       FROM product p
                left outer join transaction t on p.PROD_NO = t.prod_no
---       WHERE p.price BETWEEN 300000 AND 11100000
+      WHERE t.tran_status_code >= 2
       ORDER BY p.price) PT
 WHERE row_num BETWEEN 0 AND 12
 -- AND PT.trans_code = 0
 ORDER BY row_num;
+
+SELECT PT.row_num                 AS "rowNum",
+       PT.prod_no                 AS "prodNo",
+       PT.prod_name               AS "productName",
+       PT.price                   AS "price",
+       PT.reg_date                AS "regDate",
+       PT.trans_code              AS "status",
+       PT.image_file              AS "fileName" p.prod_no, p.prod_name,
+       p.price,
+       p.reg_date,
+       p.image_file,
+       NVL(t.tran_status_code, 0) AS trans_code
+FROM product p
+         left outer join transaction t on p.PROD_NO = t.prod_no
+WHERE p.prod_name LIKE '%%'
+  AND t.tran_status_code = 1 ) PT
+WHERE row_num BETWEEN ? AND ?
+ORDER BY row_num #
 
