@@ -84,7 +84,7 @@
             <button type="button" id="login-btn"
                     class="justify-content-start align-items-center d-flex btn btn-outline-dark">
                 <i class="bi bi-door-closed fs-5 me-3"></i>
-                <a class="nav-link active" aria-current="page" href="#">로그인</a>
+                <a class="nav-link active" aria-current="page" href="./login/login.html">로그인</a>
             </button>
         </div>
     </nav>
@@ -156,7 +156,7 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <div class="row">
+                    <div class="row d-flex align-items-center" style="margin-bottom: 16px">
                         <label for="prod-num" class="col-md-1 col-sm-6 control-label">상품 번호</label>
                         <div class="col-md-5 col-sm-6">
                             <input id="prod-num" type="number" readonly class="form-control">
@@ -167,14 +167,14 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row d-flex align-items-center" style="margin-bottom: 16px">
                         <label for="prod-detail" class="col-md-1 col-sm-6 control-label">상세 설명</label>
                         <div class="col-md-11 col-sm-6">
                             <input id="prod-detail" type="text" readonly class="form-control">
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row d-flex align-items-center" style="margin-bottom: 16px">
                         <label for="prod-regDate" class="col-md-1 col-sm-2 control-label">등록 날짜</label>
                         <div class="col-md-5 col-sm-4">
                             <input id="prod-regDate" type="date" readonly class="form-control">
@@ -185,7 +185,7 @@
                         </div>
                     </div>
 
-                    <div class="row" style="margin-bottom: 16px">
+                    <div class="row d-flex align-items-center" style="margin-bottom: 16px">
                         <label for="prod-menuDate" class="col-md-1 col-sm-2 control-label">구매 일자</label>
                         <div class="col-md-5 col-sm-4">
                             <input id="prod-menuDate" type="date" readonly class="form-control">
@@ -385,7 +385,7 @@
                     <h5 id = "name" class="card-title">` + product.productName + `</h5>
                     <span id = "price" class="card-text" style="display: flex">` + product.price + `원</span>
                     <span id = "menu-date" class="card-text" style="display: flex">` + product.regDateString + ` 등록</span>
-                    <a id = "link" href="#" class="btn btn-primary">구매하기</a>
+                    <a id = "link" onclick="viewProductInfo(${product.prodNo})" class="btn btn-primary">구매하기</a>
                 </div>
             </div>
         </div>`
