@@ -209,21 +209,31 @@
 <script>
     let currentPage;
     const $filterSelect = $("#filter-select");
+
     $(document).ready(
         () => {
+            currentPage = 1;
+            setProductList(currentPage);
+            currentPage++;
+
             $("#login-btn").hover(
                 () => $("#login-btn > i").removeClass("bi-door-closed").addClass("bi-door-open"),
                 () => $("#login-btn > i").removeClass("bi-door-open").addClass("bi-door-closed")
             );
-            currentPage = 1;
-            setProductList(currentPage);
-            currentPage++;
-            $filterSelect.change(
-                () => {
-                    console.log("filterSelect: ", $filterSelect.val())
-                    console.log("!!!!!!!!!!!!")
-                }
-            )
+
+
+        }
+    )
+
+    $filterSelect.change(
+        () => {
+            if (!["0", "1", "2", "3"].includes($filterSelect.val()))
+                return;
+            else {
+                currentPage = 1;
+                setProductList(currentPage, null, $filterSelect.val(), null, null, null);
+            }
+
         }
     )
 
@@ -233,32 +243,41 @@
         const scrollableHeight = $card_box_container[0].scrollHeight - $card_box_container[0].clientHeight;
 
         if (Math.abs(card_box_scrollTop - scrollableHeight) <= 1) {
-            appendProductList(currentPage);
+            if (["0", "1", "2", "3"].includes($filterSelect.val()))
+                appendProductList(currentPage, null, $filterSelect.val(), null, null, null);
+            else
+                appendProductList(currentPage);
             currentPage++;
         }
     })
 
-    const setProductList = (currentPage, searchCondition, searchKeyword) => {
-        let apiAddress = `/api/products/totalCount` + buildProductQueryParam(currentPage, searchCondition, searchKeyword);
+    const setProductList = (currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword) => {
+        let apiAddress = `/api/products/totalCount` + buildProductQueryParam(currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword);
         sendGetAjax(apiAddress, res => {
             createTotalProductElement(res);
-            sendGetAjax(`/api/products` + buildProductQueryParam(currentPage, searchCondition, searchKeyword), res => {
+            sendGetAjax(`/api/products` + buildProductQueryParam(currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword), res => {
                 createProductColumnElement(res);
             })
         })
     }
 
-    const appendProductList = (currentPage, searchCondition, searchKeyword) => {
-        let apiAddress = `/api/products` + buildProductQueryParam(currentPage, searchCondition, searchKeyword);
+    const appendProductList = (currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword) => {
+        let apiAddress = `/api/products` + buildProductQueryParam(currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword);
         sendGetAjax(apiAddress, res => {
             createProductColumnElement(res);
         })
     }
 
-    const buildProductQueryParam = (currentPage, searchCondition, searchKeyword) => {
+    const buildProductQueryParam = (currentPage, searchSorting, searchCondition, searchLowPrice, searchHighPrice, searchKeyword) => {
         let queryParam = '?currentPage=' + currentPage;
+        if (searchSorting)
+            queryParam += '&searchSorting=' + searchSorting;
+        if (searchCondition)
+            queryParam += '&searchCondition=' + searchCondition;
+        if (searchLowPrice)
+            queryParam += '&searchLowPrice=' + searchLowPrice + '&searchHighPrice=' + searchHighPrice;
         if (searchKeyword)
-            queryParam += '&searchCondition=' + searchCondition + "&searchKeyword" + searchKeyword;
+            queryParam += '&searchKeyword=' + searchKeyword;
         return queryParam;
     }
 
