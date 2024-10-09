@@ -46,13 +46,13 @@
                     aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/">
                 <img src="/images/ShoppingMallLogo.png" alt="" width="103.04" height="44">
             </a>
             <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar"
                  aria-labelledby="offcanvasNavbarLabel">
                 <div class="offcanvas-header">
-                    <a class="navbar-brand" href="#">
+                    <a class="navbar-brand" href="/">
                         <img src="/images/ShoppingMallLogo.png" alt="" width="103.04" height="44">
                     </a>
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -76,15 +76,16 @@
                         </li>
                         <li class="nav-item">
                             <p>회원 관리</p>
-                            <a class="nav-link " aria-current="page" href="#">가입 회원 정보 조회</a>
+                            <a class="nav-link " aria-current="page" href="/user-management">가입 회원 정보 조회</a>
                         </li>
                     </ul>
                 </div>
             </div>
             <button type="button" id="login-btn"
-                    class="justify-content-start align-items-center d-flex btn btn-outline-dark">
+                    class="justify-content-start align-items-center d-flex btn btn-outline-dark"
+                    onclick="location.href='/login'">
                 <i class="bi bi-door-closed fs-5 me-3"></i>
-                <a class="nav-link active" aria-current="page" href="./login/login.html">로그인</a>
+                <a class="nav-link active" aria-current="page" href="/login">로그인</a>
             </button>
         </div>
     </nav>

@@ -13,4 +13,20 @@ public class ViewController {
         return "index";
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "user/login";
+    }
+
+    @GetMapping("/signup")
+    public String signup() {
+        return "user/signup";
+    }
+
+    @GetMapping("/user-management")
+    public String userManagement() {
+        return "user/user-management";
+    }
+
+
 }

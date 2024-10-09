@@ -16,9 +16,9 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductRestController {
 
-    @Value("${config.display-count}")
+    @Value("${config.product-display-count}")
     int displayCount;
-    @Value("${config.page-num-size}")
+    @Value("${config.product-page-num-size}")
     int pageNumSize;
     @Autowired
     @Qualifier("productServiceImpl")

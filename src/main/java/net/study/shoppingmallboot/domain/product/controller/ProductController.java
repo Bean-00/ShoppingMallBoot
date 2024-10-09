@@ -3,6 +3,7 @@ package net.study.shoppingmallboot.domain.product.controller;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import net.study.shoppingmallboot.domain.product.service.ProductService;
 import net.study.shoppingmallboot.domain.product.vo.Product;
 import net.study.shoppingmallboot.domain.product.vo.ProductStatus;
@@ -22,16 +23,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 import java.util.StringJoiner;
 
-@Controller
+//@Controller
 @RequestMapping("/product/*")
+@RequiredArgsConstructor
 public class ProductController {
-    @Autowired
-    @Qualifier("productServiceImpl")
-    private ProductService productService;
 
-    @Autowired
-    @Qualifier("purchaseServiceImpl")
-    private PurchaseService purchaseService;
+    private final ProductService productService;
+
+    private final PurchaseService purchaseService;
 
     @Value("${config.display-count}")
     int displayCount;

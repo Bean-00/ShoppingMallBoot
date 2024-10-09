@@ -37,11 +37,13 @@ public class User {
 		return phone1;
 
 	}
+
 	public String getPhone2() {
 		if (Objects.nonNull(this.phone))
 			this.phone2 = this.phone.split("-")[1];
 		return phone2;
 	}
+
 	public String getPhone3() {
 		if (Objects.nonNull(this.phone))
 			this.phone3 = this.phone.split("-")[2];

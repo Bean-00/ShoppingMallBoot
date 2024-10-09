@@ -728,8 +728,3 @@ WHERE row_num BETWEEN 0 AND 12
 -- AND PT.trans_code = 0
 ORDER BY row_num;
 
-SELECT COUNT(prod_no) as "totalCount"
-FROM (SELECT p.prod_no as "prod_no", p.prod_name, p.price, NVL(t.tran_status_code, 0) AS trans_code
-      FROM product p
-               left outer join transaction t on p.PROD_NO = t.prod_no
-      WHERE p.prod_name LIKE '%%') PT ) TT

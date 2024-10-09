@@ -14,5 +14,10 @@ spring:
       prefix: /html/
       suffix: .html
 config:
-  display-count: 12
+  product-display-count: 12
+  product-page-num-size: 5
+  display-count: 100
   page-num-size: 5
+logging:
+  level:
+    root: DEBUG

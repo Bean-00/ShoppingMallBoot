@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import net.study.shoppingmallboot.domain.user.service.UserService;
 import net.study.shoppingmallboot.domain.user.vo.User;
 import net.study.shoppingmallboot.domain.util.vo.Search;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,19 +15,15 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserRestController {
-
-    //ToDo @RequiredArgsConstructor
-    @Autowired
-    @Qualifier("userServiceImpl")
-    private UserService userService;
+    private final UserService userService;
 
     @Value("${config.display-count}")
     int displayCount;
 
     @PostMapping("/")
     public ResponseEntity<Void> addUser(@RequestBody User user) throws Exception {
-
         userService.addUser(user);
 
         return ResponseEntity.ok().build();
