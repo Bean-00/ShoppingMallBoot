@@ -189,16 +189,17 @@
     }
 
     const clickUpdateInfoBtn = () => {
-        if ($("#update-info-btn").val() == 0) {
-            $("#update-info-btn").removeClass("btn-outline-secondary");
-            $("#update-info-btn").addClass("btn-outline-primary");
-            $("#update-info-btn").text('수정 완료');
-            $("#update-info-btn").val(1);
+        const $updateInfoBtn = $("#update-info-btn");
+        if ($updateInfoBtn.val() == 0) {
+            $updateInfoBtn.removeClass("btn-outline-secondary")
+                        .addClass("btn-outline-primary")
+                        .text('수정 완료')
+                        .val(1);
         } else {
-            $("#update-info-btn").removeClass("btn-outline-primary");
-            $("#update-info-btn").addClass("btn-outline-secondary");
-            $("#update-info-btn").text('수정');
-            $("#update-info-btn").val(0);
+            $updateInfoBtn.removeClass("btn-outline-primary")
+                        .addClass("btn-outline-secondary")
+                        .text('수정')
+                        .val(0);
         }
     }
 
