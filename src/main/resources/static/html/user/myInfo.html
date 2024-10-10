@@ -17,7 +17,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 </head>
 <style>
@@ -127,7 +128,7 @@
                             <button id="emailDomainBtn" class="btn btn-outline-secondary dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown" aria-expanded="false" disabled>이메일 주소를 선택해주세요
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end" onclick="clickEmailDomain(event)" disabled>
+                            <ul class="dropdown-menu dropdown-menu-end" onclick="clickEmailDomain(event)">
                                 <li><a class="dropdown-item">naver.com</a></li>
                                 <li><a class="dropdown-item">google.com</a></li>
                                 <li><a class="dropdown-item">kakao.com</a></li>
@@ -155,7 +156,6 @@
 
 <script src="../js/ajax.js"></script>
 <script>
-    const $inputId = $("#input-id");
     const $inputPw = $("#input-pw");
     const $inputCheckPw = $("#input-check-pw");
 
@@ -190,16 +190,33 @@
 
     const clickUpdateInfoBtn = () => {
         const $updateInfoBtn = $("#update-info-btn");
-        if ($updateInfoBtn.val() == 0) {
+        if ($updateInfoBtn.val() === '0') {
             $updateInfoBtn.removeClass("btn-outline-secondary")
                         .addClass("btn-outline-primary")
                         .text('수정 완료')
                         .val(1);
+            removeDisable();
         } else {
             $updateInfoBtn.removeClass("btn-outline-primary")
                         .addClass("btn-outline-secondary")
                         .text('수정')
                         .val(0);
+            clickUpdateFinishBtn();
+            addDisable();
+        }
+    }
+
+    const elementIdArr = ['name', 'email', 'first-phone', 'middle-phone', 'last-phone', 'email', 'main-address', 'detail-address'];
+
+    const removeDisable = () => {
+        for (let elementId of elementIdArr) {
+            $(`#input-${elementId}`).removeAttr("disabled");
+        }
+    }
+
+    const addDisable = () => {
+        for (let elementId of elementIdArr) {
+            $(`#input-${elementId}`).attr("disabled", "disabled");
         }
     }
 
@@ -209,11 +226,10 @@
 
     }
 
-    const clickSignupBtn = () => {
+    const clickUpdateFinishBtn = () => {
         const checkList = [
-            {suffix: 'id', label: '아이디란'},
-            {suffix: 'pw', label: '비밀번호란'},
-            {suffix: 'check-pw', label: '비밀번호 확인란'},
+            // {suffix: 'pw', label: '비밀번호란'},
+            // {suffix: 'check-pw', label: '비밀번호 확인란'},
             {suffix: 'name', label: '이름란'},
         ];
 
@@ -222,11 +238,6 @@
                 showFeedback({suffix: check.suffix, isValid: false, msg: `${check.label}을 입력해주세요.`});
                 return;
             }
-        }
-
-        if ($("#input-check-pw").val() !== $("#input-check-pw").val()) {
-            showFeedback({suffix: 'check-pw', isValid: false, msg: '비밀번호가 다릅니다.'});
-            return;
         }
 
         if (!validatePhoneNumber(`${$("#input-first-phone").val()}-${$("#input-middle-phone").val()}-${$("#input-last-phone").val()}`)) {
@@ -239,7 +250,28 @@
             return;
         }
 
-        sendSignupInfo();
+        sendUpdateInfo();
+    }
+
+    const sendUpdateInfo = () => {
+
+        const body = {
+            "userName": $("#input-name").val(),
+            // "password": $("#input-pw").val(),
+            "phone": `${$("#input-first-phone").val()}-${$("#input-middle-phone").val()}-${$("#input-last-phone").val()}`,
+            "addr": $("#input-main-address").val() + $("#input-detail-address").val(),
+            "email": `${$("#input-email").val()}@${$("#emailDomainBtn").text()}`
+        };
+
+        if (body.phone.length === 2)
+            body.phone = null;
+
+        if (body.email.length ===  1)
+            body.email = null;
+
+        sendPutAjax('/api/users/user01', body, () => {
+            toastr.success('정보 수정이 완료되었습니다');
+        })
     }
 
     const validateEmail = (email) => {
@@ -257,57 +289,12 @@
         return regex.test(phoneNumber);
     }
 
-    const sendSignupInfo = () => {
-
-        const body = {
-            "userId": $inputId.val(),
-            "userName": $("#input-name").val(),
-            "password": $("#input-pw").val(),
-            "role": "user",
-            "ssn": null,
-            "phone": `${$("#input-first-phone").val()}-${$("#input-middle-phone").val()}-${$("#input-last-phone").val()}`,
-            "addr": $("#input-main-address").val() + $("#input-detail-address").val(),
-            "email": `${$("#input-email").val()}@${$("#emailDomainBtn").text()}`
-        };
-
-        if (body.phone.length === 2)
-            body.phone = null;
-
-        if (body.email.length === 1)
-            body.email = null;
-
-        sendPostAjax('/api/users/', body, () => {
-            alert("회원가입이 완료되었습니다");
-            location.href = "/";
-        })
-    }
-
     const checkPw = () => {
         if ($inputPw.val() !== $inputCheckPw.val()) {
             showFeedback({suffix: 'check-pw', isValid: false, msg: '비밀번호가 다릅니다.'});
         } else {
             showFeedback({suffix: 'check-pw', isValid: true, msg: '비밀번호가 동일합니다.'});
         }
-    }
-
-    const fixId = () => {
-        $("#input-id").attr("disabled", true);
-    }
-
-    const checkDuplicationId = (id) => {
-        console.log("id", id);
-        if (!id) return;
-
-        sendGetAjax(`/api/users/${id}`, (res) => {
-            console.log("res", res);
-            if (res) {
-                showFeedback({suffix: 'id', isValid: false, msg: '이미 존재하는 아이디입니다.'});
-                $("#fix-id-btn").attr("disabled", true);
-            } else {
-                showFeedback({suffix: 'id', isValid: true, msg: '사용 가능한 아이디입니다.'});
-                $("#fix-id-btn").attr("disabled", false);
-            }
-        });
     }
 
     const showFeedback = ({suffix, isValid, msg}) => {

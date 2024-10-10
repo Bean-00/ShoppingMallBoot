@@ -42,7 +42,7 @@ public class UserRestController {
 
     @PutMapping("/{userId}")
     public ResponseEntity<Void> updateUser(@PathVariable String userId, @RequestBody User user) throws Exception {
-
+        user.setUserId(userId);
         userService.updateUser(user);
 
         return ResponseEntity.ok().build();
