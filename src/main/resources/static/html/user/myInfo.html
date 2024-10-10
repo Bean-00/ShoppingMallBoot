@@ -242,12 +242,16 @@
     }
 
     const validateEmail = (email) => {
+        if (email.length === 1)
+            return true;
         console.log("### ", email)
         const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return regex.test(email);
     }
 
     const validatePhoneNumber = (phoneNumber) => {
+        if (phoneNumber.length === 2)
+            return true;
         const regex = /^(010|011|016|017|018|019)[-]?\d{3,4}[-]?\d{4}$/;
         return regex.test(phoneNumber);
     }
@@ -264,6 +268,12 @@
             "addr": $("#input-main-address").val() + $("#input-detail-address").val(),
             "email": `${$("#input-email").val()}@${$("#emailDomainBtn").text()}`
         };
+
+        if (body.phone.length === 2)
+            body.phone = null;
+
+        if (body.email.length === 1)
+            body.email = null;
 
         sendPostAjax('/api/users/', body, () => {
             alert("회원가입이 완료되었습니다");
