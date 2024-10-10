@@ -8,7 +8,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="icon" href="/images/ShoppingMallFavicon.png">
+    <link rel="icon" type="image/x-icon" href="/images/ShoppingMallFavicon.png">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
@@ -85,20 +85,19 @@
                 <div class="col-12 justify-content-end d-flex">
                     <div class="col-4 mb-3">
                         <div class="input-group mb-3">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">선택
+                            <button id = "search-select-btn" class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">회원ID
                             </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">회원ID</a></li>
-                                <li><a class="dropdown-item" href="#">회원명</a></li>
+                            <ul class="dropdown-menu" onclick="changeSelectBtn(event)">
+                                <li><a class="dropdown-item">회원ID</a></li>
+                                <li><a class="dropdown-item">회원명</a></li>
                             </ul>
-                            <input type="text" class="form-control" aria-label="Text input with dropdown button">
-                            <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+                            <input id = "input-search" type="text" class="form-control" aria-label="Text input with dropdown button">
+                            <button class="btn btn-outline-secondary" type="button" id="button-addon2"
+                                    onclick="searchUserInfo(event)">검색</button>
                         </div>
                     </div>
-
                 </div>
-
 
                 <table class="table table-hover col-10">
                     <thead>
@@ -111,22 +110,68 @@
                     </tr>
                     </thead>
                     <tbody id="user-tbody">
-
                     </tbody>
                 </table>
             </div>
-
-
         </div>
-
     </div>
 
 </div>
+
+<button id="user-modal-btn" hidden="hidden" data-bs-toggle="modal" data-bs-target="#user-modal">
+</button>
+<div id="user-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xl" role="document" style="margin-top: 100px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">회원 상세 조회</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="row d-flex align-items-center" style="margin-bottom: 16px">
+                        <label for="input-id" class="col-md-1 col-sm-6 control-label">ID</label>
+                        <div class="col-md-5 col-sm-6">
+                            <input id="input-id" type="text" readonly class="form-control">
+                        </div>
+                        <label for="input-name" class="col-md-1 col-sm-6 control-label">NAME</label>
+                        <div class="col-md-5 col-sm-6">
+                            <input id="input-name" type="text" readonly class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row d-flex align-items-center" style="margin-bottom: 16px">
+                        <label for="input-phone" class="col-md-1 col-sm-2 control-label">PHONE</label>
+                        <div class="col-md-5 col-sm-4">
+                            <input id="input-phone" type="text" readonly class="form-control">
+                        </div>
+                        <label for="input-email" class="col-md-1 col-sm-2 control-label">EMAIL</label>
+                        <div class="col-md-5 col-sm-4">
+                            <input id="input-email" type="text" readonly class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row d-flex align-items-center" style="margin-bottom: 16px">
+                        <label for="input-address" class="col-md-1 col-sm-6 control-label">ADDRESS</label>
+                        <div class="col-md-11 col-sm-6">
+                            <input id="input-address" type="text" readonly class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 
 <script src="../js/ajax.js"></script>
 <script>
 
+    const $searchSelectBtn = $("#search-select-btn");
     $(document).ready(function () {
         $("#login-btn").hover(
             () => $("#login-btn > i").removeClass("bi-door-closed").addClass("bi-door-open"),
@@ -144,18 +189,54 @@
     const createUserTable = (res) => {
         const $userTbody = $("#user-tbody");
         let userHtml = '';
-        console.log("res: ", res);
-        for (user of res.userList) {
+        for (let user of res.userList) {
             userHtml += `<tr><th scope="row">${user.rowNum}</th>
             <td>${user.userId}</td>
             <td>${user.userName}</td>
             <td>${user.email}</td>
             <td>
-                <button id = "${user.userId}-btn" class="btn btn-outline-dark" type="button">보기</button>
+                <button id = "${user.userId}-btn" class="btn btn-outline-dark" type="button" onclick="showUserInfoModal(event)">보기</button>
             </td></tr>`
         }
-        console.log("userHtml: ", userHtml)
         $userTbody.html(userHtml);
+    }
+
+    const showUserInfoModal = (event) => {
+        const userId = event.target.id.slice(0,-4);
+
+        setUserInfoModal(userId);
+        $("#user-modal-btn").click();
+    }
+
+    const setUserInfoModal = (userId) => {
+        sendGetAjax(`/api/users/${userId}`, (res) => {
+            $("#input-id").val(res.userId);
+            $("#input-name").val(res.userName);
+            $("#input-phone").val(res.phone);
+            $("#input-email").val(res.email);
+            $("#input-address").val(res.address);
+        })
+    }
+
+    const changeSelectBtn = (event) => {
+        $searchSelectBtn.text(event.target.text);
+        $searchSelectBtn.val($searchSelectBtn.text() === '회원ID' ? 0 : 1);
+    }
+
+    const searchUserInfo = (event) => {
+        sendGetAjax('/api/users/' + buildProductQueryParam(1, $("#input-search").val(), $searchSelectBtn.val()), (res) => {
+            console.log("searchResult: ", res)
+            createUserTable(res);
+        })
+    }
+
+    const buildProductQueryParam = (currentPage, searchKeyword, searchCondition) => {
+        let queryParam = '?currentPage=' + currentPage;
+        if (searchKeyword)
+            queryParam += '&searchKeyword=' + searchKeyword;
+        if (searchCondition)
+            queryParam += '&searchCondition=' + searchCondition;
+        return queryParam;
     }
 
 
