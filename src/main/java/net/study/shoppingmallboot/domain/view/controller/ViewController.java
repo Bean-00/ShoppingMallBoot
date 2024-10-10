@@ -28,5 +28,10 @@ public class ViewController {
         return "user/user-management";
     }
 
+    @GetMapping("/myInformation")
+    public String myInformation() {
+        return "user/myInfo";
+    }
+
 
 }

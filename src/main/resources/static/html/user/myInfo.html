@@ -86,30 +86,19 @@
         <div class="col-8 d-flex justify-content-center border border-5 border-opacity-50 border-primary"
              style="border-radius: 10px; margin-top: 50px; padding-top: 30px; padding-bottom: 30px;flex-wrap: wrap">
             <div class="col-6">
-                <h3 class="mx-auto p-2 mb-5" style="font-weight: bold; text-align: center;">회원가입</h3>
+                <h3 class="mx-auto p-2 mb-5" style="font-weight: bold; text-align: center;">내 정보 보기</h3>
                 <div id="essential-info-box">
                     <h5 class="m-lg-2 pb-2" style="font-weight: bolder">필수 정보</h5>
                     <label for="input-id" style="font-weight: bolder; margin-left: 3px">ID</label>
                     <div id="id-field" class="input-group mb-3 has-validation">
                         <input id="input-id" class="login-input form-control" type="text"
-                               placeholder="아이디를 입력해주세요"/>
-                        <button class="btn btn-outline-secondary" type="button" id="fix-id-btn" onclick="fixId()">확인
-                        </button>
+                               disabled/>
                         <div id="feedback-id"></div>
                     </div>
-                    <div id="pw-field" class="has-validation mb-3">
-                        <label for="input-pw" style="font-weight: bolder; margin-left: 3px">PW</label>
-                        <input id="input-pw" class="login-input form-control" type="password"
-                               placeholder="비밀번호를 입력해주세요"/>
-                        <div id="feedback-pw"></div>
-                        <input id="input-check-pw" class="login-input form-control mt-3" type="password"
-                               placeholder="비밀번호를 다시 입력해주세요"/>
-                        <div id="feedback-check-pw"></div>
-                    </div>
+
                     <div class="name-field has-validation">
                         <label for="input-name" style="font-weight: bolder; margin-left: 3px">NAME</label>
-                        <input id="input-name" class="login-input form-control" type="text"
-                               placeholder="이름를 입력해주세요"/>
+                        <input id="input-name" class="login-input form-control" type="text" disabled/>
                     </div>
                 </div>
                 <hr>
@@ -119,13 +108,13 @@
                     <div class="input-group mb-3 has-validation">
                         <div class="d-flex">
                             <input id="input-first-phone" type="text" class="form-control" placeholder="010"
-                                   aria-label="phone1">
+                                   aria-label="phone1" disabled>
                             <span class="input-group-text">-</span>
                             <input id="input-middle-phone" type="text" class="form-control" placeholder="0000"
-                                   aria-label="phone2">
+                                   aria-label="phone2" disabled>
                             <span class="input-group-text">-</span>
                             <input id="input-last-phone" type="text" class="form-control" placeholder="0000"
-                                   aria-label="phone3">
+                                   aria-label="phone3" disabled>
                         </div>
                         <div id="feedback-phone"></div>
                     </div>
@@ -133,12 +122,12 @@
                     <div class="input-group has-validation">
                         <div class="d-flex">
                             <input id="input-email" type="text" class="form-control"
-                                   aria-label="Text input with dropdown button">
+                                   aria-label="Text input with dropdown button" disabled>
                             <span class="input-group-text">@</span>
                             <button id="emailDomainBtn" class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">이메일 주소를 선택해주세요
+                                    data-bs-toggle="dropdown" aria-expanded="false" disabled>이메일 주소를 선택해주세요
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end" onclick="clickEmailDomain(event)">
+                            <ul class="dropdown-menu dropdown-menu-end" onclick="clickEmailDomain(event)" disabled>
                                 <li><a class="dropdown-item">naver.com</a></li>
                                 <li><a class="dropdown-item">google.com</a></li>
                                 <li><a class="dropdown-item">kakao.com</a></li>
@@ -146,14 +135,16 @@
                         </div>
                         <div id="feedback-email"></div>
                     </div>
-                    <label class="mt-3" for="input-main-address" style="font-weight: bolder; margin-left: 3px">ADDRESS</label>
+                    <label class="mt-3" for="input-main-address"
+                           style="font-weight: bolder; margin-left: 3px">ADDRESS</label>
                     <input id="input-main-address" class="login-input form-control mb-3" type="text"
-                           placeholder="기본 주소를 입력해주세요"/>
+                           disabled/>
                     <input id="input-detail-address" class="login-input form-control mb-3" type="text"
-                           placeholder="상세 주소를 입력해주세요"/>
+                           disabled/>
                 </div>
 
-                <button class="col-12 btn btn-outline-secondary my-2" type="button" onclick="clickSignupBtn()">회원가입
+                <button id="update-info-btn" class="col-12 btn btn-outline-secondary my-2" type="button"
+                        onclick="clickUpdateInfoBtn()">수정
                 </button>
             </div>
         </div>
@@ -173,18 +164,9 @@
             () => $("#login-btn > i").removeClass("bi-door-closed").addClass("bi-door-open"),
             () => $("#login-btn > i").removeClass("bi-door-open").addClass("bi-door-closed")
         );
+
+        setUserInfo();
     });
-
-    $inputId.focus(() => {
-        $inputId.on('keyup', _.debounce(() => {
-            if ($inputId.val() !== "")
-                checkDuplicationId($inputId.val());
-        }, 300))
-    })
-
-    $inputId.blur(() => {
-        $inputId.removeClass('show')
-    })
 
     $inputCheckPw.focus(() => {
         $inputCheckPw.on('keyup', () => {
@@ -192,6 +174,33 @@
                 checkPw();
         })
     })
+
+
+    const setUserInfo = () => {
+        $("#update-info-btn").val(0);
+        sendGetAjax(`/api/users/user01`, (res) => {
+            $("#input-id").val(res.userId);
+            $("#input-name").val(res.userName);
+            $("#input-phone").val(res.phone);
+            $("#input-email").val(res.email.split('@')[0]);
+            $("#emailDomainBtn").text(res.email.split('@')[1]);
+            $("#input-address").val(res.address);
+        })
+    }
+
+    const clickUpdateInfoBtn = () => {
+        if ($("#update-info-btn").val() == 0) {
+            $("#update-info-btn").removeClass("btn-outline-secondary");
+            $("#update-info-btn").addClass("btn-outline-primary");
+            $("#update-info-btn").text('수정 완료');
+            $("#update-info-btn").val(1);
+        } else {
+            $("#update-info-btn").removeClass("btn-outline-primary");
+            $("#update-info-btn").addClass("btn-outline-secondary");
+            $("#update-info-btn").text('수정');
+            $("#update-info-btn").val(0);
+        }
+    }
 
     const clickEmailDomain = (event) => {
         console.log("event", event.target.innerHTML);
