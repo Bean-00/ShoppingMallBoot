@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>signup</title>
+    <title>cream</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
@@ -26,13 +26,13 @@
     }
 
     #search-box {
-        margin-bottom: 30px; /* search-box와 card-box-container 사이 공간 */
+        margin-bottom: 30px;
     }
 
     #card-box-container {
-        margin-top: 30px; /* search-box와 card-box-container 사이 공간 */
-        overflow-y: auto; /* 스크롤 가능하도록 설정 */
-        height: calc(100vh - 350px); /* 높이를 조정해서 겹침 방지 */
+        margin-top: 30px;
+        overflow-y: auto;
+        height: calc(100vh - 350px);
     }
 
 
@@ -66,13 +66,13 @@
                         </li>
                         <li class="nav-item">
                             <p>마이페이지</p>
-                            <a class="nav-link " aria-current="page" href="#">내 정보 조회</a>
-                            <a class="nav-link " aria-current="page" href="#">구매 이력 조회</a>
+                            <a class="nav-link " aria-current="page" href="/myInformation">내 정보 조회</a>
+                            <a class="nav-link " aria-current="page" href="/myPurchaseLog">구매 이력 조회</a>
                         </li>
                         <li class="nav-item">
                             <p>상품 관리</p>
-                            <a class="nav-link " aria-current="page" href="#">판매 상품 </a>
-                            <a class="nav-link " aria-current="page" href="#">구매 이력 조회</a>
+                            <a class="nav-link " aria-current="page" href="#">상품 등록</a>
+                            <a class="nav-link " aria-current="page" href="#">판매 완료 상품 관리</a>
                         </li>
                         <li class="nav-item">
                             <p>회원 관리</p>
@@ -187,7 +187,7 @@
                     </div>
 
                     <div class="row d-flex align-items-center" style="margin-bottom: 16px">
-                        <label for="prod-menuDate" class="col-md-1 col-sm-2 control-label">구매 일자</label>
+                        <label for="prod-menuDate" class="col-md-1 col-sm-2 control-label">제조 일자</label>
                         <div class="col-md-5 col-sm-4">
                             <input id="prod-menuDate" type="date" readonly class="form-control">
                         </div>
@@ -198,8 +198,9 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+            <div class="modal-footer justify-content-between d-flex">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button id = "move-purchase-btn" type="button" class="btn btn-primary" data-bs-dismiss="modal">구매하기</button>
             </div>
         </div>
     </div>
@@ -375,18 +376,18 @@
         for (let product of res) {
             $card_html += `<div id = "product-card" class="card col-xl-4" style="width: 18rem; height: fit-content; margin-bottom: 30px">
             <span id = "row-num" class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-dark">
-                  ` + product.rowNum + `
+                  ${product.rowNum}
             </span>
             <div id = "file-name" class="image-box d-flex align-items-center" style="width: 262px; height: 262px">
-                <img src="/images/uploadFiles/` + product.fileName + `" class="card-img-top" alt="/images/uploadFiles/딸기.jpg" >
+                <img src="/images/uploadFiles/${product.fileName}" class="card-img-top" alt="/images/uploadFiles/딸기.jpg" >
             </div>
             <div class="card-body">
                 <div class="align-content-around">
-                    <h6>상품 상태 <span id = "status" class="badge bg-success rounded-pill">` + product.status + `</span></h6>
-                    <h5 id = "name" class="card-title">` + product.productName + `</h5>
-                    <span id = "price" class="card-text" style="display: flex">` + product.price + `원</span>
-                    <span id = "menu-date" class="card-text" style="display: flex">` + product.regDateString + ` 등록</span>
-                    <a id = "link" onclick="viewProductInfo(${product.prodNo})" class="btn btn-primary">구매하기</a>
+                    <h6>상품 상태 <span id = "${product.prodNo}-status" class="badge bg-success rounded-pill">${product.status}</span></h6>
+                    <h5 id = "name" class="card-title">${product.productName}</h5>
+                    <span id = "price" class="card-text" style="display: flex">${product.price}원</span>
+                    <span id = "menu-date" class="card-text" style="display: flex">${product.regDateString} 등록</span>
+                    <a id = "link" onclick="viewProductInfo(${product.prodNo})" class="btn btn-primary">상세보기</a>
                 </div>
             </div>
         </div>`
@@ -407,6 +408,9 @@
             $("#prod-modal #prod-name").val(res.prodName);
             $("#prod-modal #prod-price").val(res.price);
             $("#prod-modal #prod-regDate").val(moment(res.regDate).format('YYYY-MM-DD'));
+            $(`#${res.prodNo}-status`).text() !== 'FOR_SALE'?
+                $("#move-purchase-btn").attr("disabled", "disabled").text('품절').removeClass("btn-primary").addClass("btn-danger") :
+                $("#move-purchase-btn").removeAttr("disabled").text('구매').removeClass("btn-danger").addClass("btn-primary");
             $("#prod-modal-btn").click();
         })
     }
