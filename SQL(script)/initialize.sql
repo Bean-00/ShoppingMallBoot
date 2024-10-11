@@ -728,3 +728,23 @@ WHERE row_num BETWEEN 0 AND 12
 -- AND PT.trans_code = 0
 ORDER BY row_num;
 
+
+select * from TRANSACTION;
+
+select * from TRANSACTION;
+
+
+
+(SELECT ROW_NUMBER() OVER (ORDER BY T.order_date) AS row_num,
+       buyer_id,
+       user_name,
+       cell_phone,
+       receiver_name,
+       receiver_phone,
+       tran_status_code,
+       P.prod_no,
+       order_date,
+       prod_name
+FROM TRANSACTION T INNER JOIN USERS U on U.USER_ID = T.BUYER_ID
+                    INNER JOIN PRODUCT P on T.prod_no = P.prod_no
+WHERE buyer_id = 'user01')

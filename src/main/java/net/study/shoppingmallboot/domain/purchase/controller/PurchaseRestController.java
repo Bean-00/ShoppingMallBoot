@@ -41,8 +41,8 @@ public class PurchaseRestController {
     }
 
     @GetMapping({"", "/"})
-    public ResponseEntity<Map<String, Object>> listPurchase(@RequestParam(name="buyerId") String buyerId,
-                                                            @RequestParam(name="currentPage", required = false, defaultValue = "1") int currentPage) {
+    public ResponseEntity<Map<String, Object>> listPurchase(@RequestParam(name="currentPage", required = false, defaultValue = "1") int currentPage,
+                                                            @RequestParam(name="buyerId") String buyerId) {
 
         Search search = new Search();
         search.setCurrentPage(currentPage);

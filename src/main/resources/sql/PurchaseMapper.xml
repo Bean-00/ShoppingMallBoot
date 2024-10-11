@@ -23,6 +23,7 @@
         </association>
         <association property="purchaseProd" javaType="Product">
             <id property="prodNo" column="prod_no"></id>
+            <id property="prodName" column="prod_name"></id>
         </association>
     </resultMap>
 
@@ -49,17 +50,21 @@
                receiver_name,
                receiver_phone,
                tran_status_code,
-               prod_no
+               prod_no,
+               order_date,
+                prod_name
         FROM (SELECT ROW_NUMBER() OVER (ORDER BY order_date) AS row_num,
-                      buyer_id,
+                     buyer_id,
                      user_name,
                      cell_phone,
                      receiver_name,
                      receiver_phone,
                      tran_status_code,
-                     prod_no,
-                     order_date
+                     P.prod_no,
+                     order_date,
+                    prod_name
               FROM TRANSACTION T INNER JOIN USERS U on U.USER_ID = T.BUYER_ID
+                                INNER JOIN PRODUCT P on T.prod_no = P.prod_no
               WHERE buyer_id = #{buyerId})
         WHERE row_num Between #{startIndex} AND #{endIndex}
         ORDER BY row_num
