@@ -33,5 +33,10 @@ public class ViewController {
         return "user/myInfo";
     }
 
+    @GetMapping("/myPurchaseLog")
+    public String myPurchaseLog() {
+        return "purchase/purchase-log";
+    }
+
 
 }
