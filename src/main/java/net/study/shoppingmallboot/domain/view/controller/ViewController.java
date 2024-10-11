@@ -38,5 +38,10 @@ public class ViewController {
         return "purchase/purchase-log";
     }
 
+    @GetMapping("/purchase-product")
+    public String purchaseProduct() {
+        return "product/purchase-product";
+    }
+
 
 }
