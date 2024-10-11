@@ -200,7 +200,7 @@
             </div>
             <div class="modal-footer justify-content-between d-flex">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                <button id = "move-purchase-btn" type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="location.href='/purchase-product'">구매하기</button>
+                <button id = "move-purchase-btn" type="button" class="btn btn-primary" data-bs-dismiss="modal">구매하기</button>
             </div>
         </div>
     </div>
@@ -410,7 +410,7 @@
             $("#prod-modal #prod-regDate").val(moment(res.regDate).format('YYYY-MM-DD'));
             $(`#${res.prodNo}-status`).text() !== 'FOR_SALE'?
                 $("#move-purchase-btn").attr("disabled", "disabled").text('품절').removeClass("btn-primary").addClass("btn-danger") :
-                $("#move-purchase-btn").removeAttr("disabled").text('구매').removeClass("btn-danger").addClass("btn-primary");
+                $("#move-purchase-btn").removeAttr("disabled").text('구매').removeClass("btn-danger").addClass("btn-primary").attr("onclick", `location.href='/purchase-product?prodNo=${res.prodNo}'`);
             $("#prod-modal-btn").click();
         })
     }

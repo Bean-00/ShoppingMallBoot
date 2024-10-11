@@ -733,6 +733,7 @@ select * from TRANSACTION;
 
 select * from TRANSACTION;
 
+select * from users;
 
 
 (SELECT ROW_NUMBER() OVER (ORDER BY T.order_date) AS row_num,

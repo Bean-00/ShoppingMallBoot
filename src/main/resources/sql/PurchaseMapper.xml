@@ -39,7 +39,7 @@
         INTO transaction(tran_no, prod_no, buyer_id, payment_option, receiver_name, receiver_phone,
                          dlvy_addr, dlvy_request, tran_status_code, order_date, dlvy_date)
         VALUES (seq_transaction_tran_no.nextval, #{prodNo}, #{buyerId}, #{paymentOption:VARCHAR}, #{receiverName:VARCHAR}, #{receiverPhone:VARCHAR},
-                #{dlvyAddr:VARCHAR}, #{dlvyRequest:VARCHAR}, '1', #{orderDate:DATE}, #{dlvyDate:DATE})
+                #{dlvyAddr:VARCHAR}, #{dlvyRequest:VARCHAR}, '1', sysdate, #{dlvyDate:DATE})
     </insert>
 
     <select id="getPurchaseList" parameterType="Search" resultMap="purchaseSelectMap">

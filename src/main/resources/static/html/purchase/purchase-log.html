@@ -166,7 +166,7 @@
     });
 
     const setPurchaseTable = () => {
-        sendGetAjax('/api/purchases/' + buildProductQueryParam(1, 'user01'), (res) => {
+        sendGetAjax('/api/purchases/' + buildProductQueryParam(1, 'full'), (res) => {
             createPurchaseTable(res);
         })
     }
@@ -193,7 +193,7 @@
         $("#purchase-modal-btn").click();
     }
 
-    const setPurchaseInfoModal = (purchaseId = 'user01') => {
+    const setPurchaseInfoModal = (purchaseId = 'full') => {
         sendGetAjax(`/api/purchases/buyerId=${purchaseId}&currentPage=1`, (res) => {
             $("#input-id").val(res.purchaseId);
             $("#input-name").val(res.purchaseName);
