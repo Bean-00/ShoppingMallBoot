@@ -109,47 +109,67 @@
     <div class="modal-dialog modal-xl" role="document" style="margin-top: 100px">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">회원 상세 조회</h4>
+                <h4 class="modal-title" id="myModalLabel">주문 상세 조회</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <div class="row d-flex align-items-center" style="margin-bottom: 16px">
-                        <label for="input-id" class="col-md-1 col-sm-6 control-label">ID</label>
-                        <div class="col-md-5 col-sm-6">
-                            <input id="input-id" type="text" readonly class="form-control">
+                <div class="justify-content-center d-flex">
+                    <div id="delivery-info-box" style="margin: 50px 0px">
+                        <h5 class="m-lg-2 pb-2" style="font-weight: bolder">배송 정보</h5>
+                        <label for="input-receiver-name" style="font-weight: bolder; margin-left: 3px">RECEIVER
+                            NAME</label>
+                        <div class="input-group mb-3 has-validation">
+                            <input id="input-receiver-name" class="login-input form-control" type="text"
+                                   placeholder="배송받으실 분 성함을 입력해주세요"/>
+                            <div id="feedback-receiver-name"></div>
                         </div>
-                        <label for="input-name" class="col-md-1 col-sm-6 control-label">NAME</label>
-                        <div class="col-md-5 col-sm-6">
-                            <input id="input-name" type="text" readonly class="form-control">
-                        </div>
-                    </div>
 
-                    <div class="row d-flex align-items-center" style="margin-bottom: 16px">
-                        <label for="input-phone" class="col-md-1 col-sm-2 control-label">PHONE</label>
-                        <div class="col-md-5 col-sm-4">
-                            <input id="input-phone" type="text" readonly class="form-control">
+                        <label for="input-first-phone" style="font-weight: bolder; margin-left: 3px">RECEIVER
+                            PHONE</label>
+                        <div class="input-group mb-3 has-validation">
+                            <div class="d-flex">
+                                <input id="input-first-phone" type="text" class="form-control" placeholder="010"
+                                       aria-label="phone1">
+                                <span class="input-group-text">-</span>
+                                <input id="input-middle-phone" type="text" class="form-control" placeholder="0000"
+                                       aria-label="phone2">
+                                <span class="input-group-text">-</span>
+                                <input id="input-last-phone" type="text" class="form-control" placeholder="0000"
+                                       aria-label="phone3">
+                            </div>
+                            <div id="feedback-phone"></div>
                         </div>
-                        <label for="input-email" class="col-md-1 col-sm-2 control-label">EMAIL</label>
-                        <div class="col-md-5 col-sm-4">
-                            <input id="input-email" type="text" readonly class="form-control">
-                        </div>
-                    </div>
 
-                    <div class="row d-flex align-items-center" style="margin-bottom: 16px">
-                        <label for="input-address" class="col-md-1 col-sm-6 control-label">ADDRESS</label>
-                        <div class="col-md-11 col-sm-6">
-                            <input id="input-address" type="text" readonly class="form-control">
+                        <label for="input-address"
+                               style="font-weight: bolder; margin-left: 3px">RECEIVER ADDRESS</label>
+                        <div id="input-group has-validation">
+                            <input id="input-address" class="login-input form-control" type="text"
+                                   placeholder="기본 주소를 입력해주세요"/>
+                            <div id="feedback-address"></div>
+                        </div>
+
+                        <label for="input-delivery-request"
+                               style="font-weight: bolder; margin-left: 3px; margin-top: 16px">RECEIVER REQUEST</label>
+                        <input id="input-delivery-request" class="login-input form-control" type="text"
+                               placeholder="배송 요청사항을 입력해주세요"/>
+
+                        <label for="input-delivery-request"
+                               style="font-weight: bolder; margin-left: 3px; margin-top: 16px">RECEIVER REQUEST
+                            DATE</label>
+                        <div id="input-group has-validation">
+                            <input id="input-delivery-date" class="login-input form-control" type="date"
+                                   placeholder="배송 요청일을 입력해주세요"/>
+                            <div id="feedback-delivery-date"></div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer justify-content-between d-flex">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button id = "update-purchase-info-btn" type="button" class="btn btn-primary" data-bs-dismiss="modal">수정하기</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 </body>
 
@@ -187,14 +207,14 @@
     }
 
     const showPurchaseInfoModal = (event) => {
-        const purchaseId = event.target.id.slice(0,-4);
+        const purchaseId = event.target.id.slice(0, -4);
 
         setPurchaseInfoModal(purchaseId);
         $("#purchase-modal-btn").click();
     }
 
-    const setPurchaseInfoModal = (purchaseId = 'full') => {
-        sendGetAjax(`/api/purchases/buyerId=${purchaseId}&currentPage=1`, (res) => {
+    const setPurchaseInfoModal = (buyerId = 'full') => {
+        sendGetAjax(`/api/purchases/?currentPage=1&buyerId=${buyerId}`, (res) => {
             $("#input-id").val(res.purchaseId);
             $("#input-name").val(res.purchaseName);
             $("#input-phone").val(res.phone);

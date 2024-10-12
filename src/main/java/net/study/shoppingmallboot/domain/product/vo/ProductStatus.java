@@ -1,6 +1,7 @@
 package net.study.shoppingmallboot.domain.product.vo;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import net.study.shoppingmallboot.domain.purchase.vo.constant.PurchaseStatus;
@@ -21,13 +22,15 @@ public class ProductStatus {
     private int rowNum;
     private String fileName;
 
-    public String getTranText() {
+    @JsonProperty("statusText")
+    public String getStatusText() {
         return status.getText();
     }
 
     public void setStatus(String code) {
         this.status = PurchaseStatus.getByCode(code);
     }
+
     public String getRegDateString() {
         if (Objects.isNull(this.regDate)) return null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일");

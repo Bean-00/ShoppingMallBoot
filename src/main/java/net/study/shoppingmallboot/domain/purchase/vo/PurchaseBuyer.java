@@ -1,5 +1,6 @@
 package net.study.shoppingmallboot.domain.purchase.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import net.study.shoppingmallboot.domain.purchase.vo.constant.PurchaseStatus;
@@ -14,7 +15,8 @@ public class PurchaseBuyer {
     private String tranCode;
     private String prodNo;
 
-    public String getTranText() {
+    @JsonProperty("statusText")
+    public String getStatusText() {
         return PurchaseStatus.getTextByCode(this.tranCode);
     }
 

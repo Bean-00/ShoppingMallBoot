@@ -38,7 +38,8 @@
         INSERT
         INTO transaction(tran_no, prod_no, buyer_id, payment_option, receiver_name, receiver_phone,
                          dlvy_addr, dlvy_request, tran_status_code, order_date, dlvy_date)
-        VALUES (seq_transaction_tran_no.nextval, #{prodNo}, #{buyerId}, #{paymentOption:VARCHAR}, #{receiverName:VARCHAR}, #{receiverPhone:VARCHAR},
+        VALUES (seq_transaction_tran_no.nextval, #{prodNo}, #{buyerId}, #{paymentOption:VARCHAR},
+                #{receiverName:VARCHAR}, #{receiverPhone:VARCHAR},
                 #{dlvyAddr:VARCHAR}, #{dlvyRequest:VARCHAR}, '1', sysdate, #{dlvyDate:DATE})
     </insert>
 
@@ -52,9 +53,8 @@
                tran_status_code,
                prod_no,
                order_date,
-                prod_name
-        FROM (SELECT ROW_NUMBER() OVER (ORDER BY order_date) AS row_num,
-                     buyer_id,
+               prod_name
+        FROM (SELECT ROW_NUMBER() OVER (ORDER BY tran_no desc) AS row_num, buyer_id,
                      user_name,
                      cell_phone,
                      receiver_name,
@@ -62,17 +62,18 @@
                      tran_status_code,
                      P.prod_no,
                      order_date,
-                    prod_name
-              FROM TRANSACTION T INNER JOIN USERS U on U.USER_ID = T.BUYER_ID
-                                INNER JOIN PRODUCT P on T.prod_no = P.prod_no
+                     prod_name,
+                    tran_no
+              FROM TRANSACTION T
+                       INNER JOIN USERS U on U.USER_ID = T.BUYER_ID
+                       INNER JOIN PRODUCT P on T.prod_no = P.prod_no
               WHERE buyer_id = #{buyerId})
         WHERE row_num Between #{startIndex} AND #{endIndex}
         ORDER BY row_num
     </select>
 
     <select id="checkPurchaseLog" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT
-            count(prod_no)
+        SELECT count(prod_no)
         FROM transaction
         WHERE prod_no = #{prodNo}
     </select>

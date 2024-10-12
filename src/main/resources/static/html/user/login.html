@@ -17,6 +17,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+          integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+            integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
 </head>
@@ -86,7 +92,7 @@
                     <input id = "input-id"class="login-input form-control mb-3" type="text" placeholder="아이디를 입력해주세요" />
                     <label for="input-pw" style="font-weight: bolder">PW</label>
                     <input id = "input-pw" class="login-input form-control mb-3" type="password" placeholder="비밀번호를 입력해주세요" />
-                    <button class = "col-12 btn btn-outline-primary my-2    " type="button">로그인</button>
+                    <button class = "col-12 btn btn-outline-primary my-2" type="button" onclick="signin()">로그인</button>
                     <hr>
                     <button class = "col-12 btn btn-outline-secondary my-2" type="button" onclick="location.href='/signup'" >회원가입</button>
 
@@ -98,6 +104,7 @@
 </div>
 </body>
 
+<script src="../js/ajax.js"></script>
 <script>
     $(document).ready(function () {
         $("#login-btn").hover(
@@ -105,5 +112,20 @@
             () => $("#login-btn > i").removeClass("bi-door-open").addClass("bi-door-closed")
         );
     });
+
+    const signin = () => {
+        const userId = $("#input-id").val();
+        const password = $("#input-pw").val();
+
+        sendPostAjax('/api/users/login', {
+            userId,
+            password
+        }, (res) => {
+            if (res)
+                toastr.success('로그인이 완료되었습니다.');
+            else
+                toastr.error('아이디 혹은 비밀번호가 틀렸습니다.');
+        })
+    }
 </script>
 </html>

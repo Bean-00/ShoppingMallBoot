@@ -383,7 +383,7 @@
             </div>
             <div class="card-body">
                 <div class="align-content-around">
-                    <h6>상품 상태 <span id = "${product.prodNo}-status" class="badge bg-success rounded-pill">${product.status}</span></h6>
+                    <h6>상품 상태 <span id = "${product.prodNo}-status" class="badge bg-success rounded-pill">${product.statusText}</span></h6>
                     <h5 id = "name" class="card-title">${product.productName}</h5>
                     <span id = "price" class="card-text" style="display: flex">${product.price}원</span>
                     <span id = "menu-date" class="card-text" style="display: flex">${product.regDateString} 등록</span>
@@ -408,7 +408,7 @@
             $("#prod-modal #prod-name").val(res.prodName);
             $("#prod-modal #prod-price").val(res.price);
             $("#prod-modal #prod-regDate").val(moment(res.regDate).format('YYYY-MM-DD'));
-            $(`#${res.prodNo}-status`).text() !== 'FOR_SALE'?
+            res.status !== 'FOR_SALE'?
                 $("#move-purchase-btn").attr("disabled", "disabled").text('품절').removeClass("btn-primary").addClass("btn-danger") :
                 $("#move-purchase-btn").removeAttr("disabled").text('구매').removeClass("btn-danger").addClass("btn-primary").attr("onclick", `location.href='/purchase-product?prodNo=${res.prodNo}'`);
             $("#prod-modal-btn").click();
