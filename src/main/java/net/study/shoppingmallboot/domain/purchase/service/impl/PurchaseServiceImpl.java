@@ -45,4 +45,9 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchaseMapper.updateTransCode(prodNo);
     }
 
+    @Override
+    public Purchase getPurchase(int tranNo) {
+        return purchaseMapper.getPurchase(tranNo);
+    }
+
 }

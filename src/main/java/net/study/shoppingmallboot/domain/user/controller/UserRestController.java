@@ -1,17 +1,20 @@
 package net.study.shoppingmallboot.domain.user.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import net.study.shoppingmallboot.domain.user.service.UserService;
 import net.study.shoppingmallboot.domain.user.vo.User;
 import net.study.shoppingmallboot.domain.util.vo.Search;
+import net.study.shoppingmallboot.domain.util.vo.SessionUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/api/users")
@@ -49,11 +52,39 @@ public class UserRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User user) throws Exception {
-
+    public ResponseEntity<User> login(@RequestBody User user, HttpSession session, HttpServletResponse response) throws Exception {
         User loginUser = userService.loginUser(user);
 
+        if (Objects.nonNull(user)) {
+
+            final String sessionId = session.getId();
+
+            session.setAttribute("loginUser", loginUser);
+            SessionUtil.addSession(sessionId, session);
+            Cookie cookie = SessionUtil.createSessionCookie(sessionId);
+            response.addCookie(cookie);
+        }
+
         return ResponseEntity.ok().body(loginUser);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpSession session) {
+        SessionUtil.removeSession(session.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/login-user")
+    public ResponseEntity<User> loginUser(HttpServletRequest request) {
+        Optional<String> sessionIdOpt = SessionUtil.getSessionId(request.getCookies());
+
+        if (!sessionIdOpt.isPresent() || !SessionUtil.containsSession(sessionIdOpt.get())) {
+            return ResponseEntity.ok(null);
+        }
+
+        User loginUser = (User)SessionUtil.getSession(sessionIdOpt.get()).getAttribute("loginUser");
+
+       return ResponseEntity.ok().body(loginUser);
     }
 
     @GetMapping({"", "/"})

@@ -399,8 +399,6 @@
         sendGetAjax(`/api/products/` + prodNo, res => {
             if (!res)
                 return alert("상품 조회에 실패했습니다");
-            console.log("prodNo: ", prodNo)
-            console.log("###", res)
             $("#prod-modal #prod-num").val(res.prodNo);
             $("#prod-modal #prod-detail").val(res.prodDetail);
             $("#prod-modal #prod-fileName").val(res.fileName);
@@ -408,7 +406,7 @@
             $("#prod-modal #prod-name").val(res.prodName);
             $("#prod-modal #prod-price").val(res.price);
             $("#prod-modal #prod-regDate").val(moment(res.regDate).format('YYYY-MM-DD'));
-            res.status !== 'FOR_SALE'?
+            $(`#${res.prodNo}-status`).text() !== "판매중"?
                 $("#move-purchase-btn").attr("disabled", "disabled").text('품절').removeClass("btn-primary").addClass("btn-danger") :
                 $("#move-purchase-btn").removeAttr("disabled").text('구매').removeClass("btn-danger").addClass("btn-primary").attr("onclick", `location.href='/purchase-product?prodNo=${res.prodNo}'`);
             $("#prod-modal-btn").click();

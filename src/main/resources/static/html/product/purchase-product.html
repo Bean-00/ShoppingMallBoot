@@ -285,16 +285,18 @@
         const paymentOption = $("#radio-payment-cash").is(":checked") ? 1 : 2;
 
         const body = {
-            "receiverName": $("#input-name").val(),
+            "receiverName": $("#input-receiver-name").val(),
             "receiverPhone": `${$("#input-first-phone").val()}-${$("#input-middle-phone").val()}-${$("#input-last-phone").val()}`,
             "status": 1,
             "prodNo": prodNo,
-            "trans": $("#input-delivery-request").val(),
             "buyerId": "full",
-            "addr": $("#input-address").val(),
+            "dlvyAddr": $("#input-address").val(),
             "paymentOption": paymentOption,
-            "dlvyDate": $("#input-delivery-date").val()
+            "dlvyDate": $("#input-delivery-date").val(),
+            "dlvyRequest": $("#input-delivery-request").val(),
         };
+
+        console.log("body: ", body)
 
         if (body.receiverPhone.length === 2)
             body.receiverPhone = null;

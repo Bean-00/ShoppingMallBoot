@@ -12,8 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionUtil {
     private static final Map<String, HttpSession> repository = new ConcurrentHashMap<>();
 
-    public static final String SESSION_NAME = "JSESSION_ID";
-    public static final String HISTORY_NAME = "history";
+    private static final String SESSION_NAME = "JSESSION_ID";
+    private static final String HISTORY_NAME = "history";
 
 
     public static HttpSession getSession(String sessionId) {
@@ -44,16 +44,6 @@ public class SessionUtil {
     }
 
      public static Optional<String> getCookieValue(Cookie[] cookies, String cookieName) {
-//        if (Objects.isNull(cookies)) return Optional.empty();
-//        for (Cookie cookie: cookies) {
-//            if (cookie.getName().equals(cookieName)) {
-//                if (cookie.getValue().equals("")){
-//                    return Optional.empty();
-//                }
-//                return Optional.ofNullable(cookie.getValue());
-//            }
-//        }
-//        return Optional.empty();
          return Arrays.stream(cookies)
                  .filter(cookie -> cookie.getName().equals(cookieName)
                          && !cookie.getValue().equals(""))
@@ -62,6 +52,8 @@ public class SessionUtil {
     }
 
     public static void removeSession(String sessionId) {
+        if (!containsSession(sessionId)) return;
+
         repository.get(sessionId).invalidate();
         repository.remove(sessionId);
     }

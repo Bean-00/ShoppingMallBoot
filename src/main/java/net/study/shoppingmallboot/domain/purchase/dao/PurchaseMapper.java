@@ -19,4 +19,6 @@ public interface PurchaseMapper {
     void updateTransCode(int prodNo);
 
     void deletePurchase(int prodNo);
+
+    Purchase getPurchase(int tranNo);
 }

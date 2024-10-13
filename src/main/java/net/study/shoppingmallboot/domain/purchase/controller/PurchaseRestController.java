@@ -1,31 +1,23 @@
 package net.study.shoppingmallboot.domain.purchase.controller;
 
+import lombok.RequiredArgsConstructor;
 import net.study.shoppingmallboot.domain.product.service.ProductService;
-import net.study.shoppingmallboot.domain.product.vo.Product;
 import net.study.shoppingmallboot.domain.purchase.service.PurchaseService;
 import net.study.shoppingmallboot.domain.purchase.vo.Purchase;
 import net.study.shoppingmallboot.domain.util.vo.Search;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/api/purchases")
+@RequiredArgsConstructor
 public class PurchaseRestController {
-    @Autowired
-    @Qualifier("purchaseServiceImpl")
-    PurchaseService purchaseService;
-
-    @Autowired
-    @Qualifier("productServiceImpl")
-    ProductService productService;
+    private final PurchaseService purchaseService;
 
     @Value("${config.display-count}")
     int displayCount;
@@ -59,6 +51,14 @@ public class PurchaseRestController {
         response.put("purchaseList", purchaseList);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{tranNo}")
+    public ResponseEntity<Purchase> getPurchase(@PathVariable int tranNo) {
+
+        Purchase purchase = purchaseService.getPurchase(tranNo);
+
+        return ResponseEntity.ok().body(purchase);
     }
 
     @PatchMapping({"", "/"})

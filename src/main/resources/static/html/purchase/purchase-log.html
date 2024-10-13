@@ -170,6 +170,7 @@
             </div>
         </div>
     </div>
+</div>
 
 </body>
 
@@ -198,7 +199,7 @@
             purchaseHtml += `<tr><th scope="row">${purchase.rowNum}</th>
             <td>${purchase.purchaseProd.prodName}</td>
             <td>${purchase.orderDate}</td>
-            <td>${purchase.status}</td>
+            <td>${purchase.statusText}</td>
             <td>
                 <button id = "${purchase.purchaseId}-btn" class="btn btn-outline-dark" type="button" onclick="showPurchaseInfoModal(event)">보기</button>
             </td></tr>`
@@ -215,11 +216,11 @@
 
     const setPurchaseInfoModal = (buyerId = 'full') => {
         sendGetAjax(`/api/purchases/?currentPage=1&buyerId=${buyerId}`, (res) => {
-            $("#input-id").val(res.purchaseId);
-            $("#input-name").val(res.purchaseName);
-            $("#input-phone").val(res.phone);
-            $("#input-email").val(res.email);
-            $("#input-address").val(res.address);
+            $("#input-receiver-name").val(res.purchaseId);
+            $("#input-phone").val(res.purchaseName);
+            $("#input-address").val(res.phone);
+            $("#input-delivery-request").val(res.email);
+            $("#input-delivery-date").val(res.address);
         })
     }
 
@@ -229,7 +230,7 @@
     }
 
     const searchPurchaseInfo = (event) => {
-        sendGetAjax('/api/purchases/' + buildProductQueryParam(1, 'user01'), (res) => {
+        sendGetAjax('/api/purchases/' + buildProductQueryParam(1, 'full'), (res) => {
             console.log("searchResult: ", res)
             createPurchaseTable(res);
         })

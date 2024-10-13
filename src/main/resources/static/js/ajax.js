@@ -1,21 +1,21 @@
 
-function sendGetAjax (url, successCallback) {
-    sendAjax(url, 'GET', null, successCallback)
+function sendGetAjax (url, successCallback, errorCallback) {
+    sendAjax(url, 'GET', null, successCallback, errorCallback)
 }
 
-function sendPostAjax (url, body, successCallback) {
-    sendAjax(url, 'POST', body, successCallback)
+function sendPostAjax (url, body, successCallback, errorCallback) {
+    sendAjax(url, 'POST', body, successCallback, errorCallback)
 }
 
-function sendPutAjax (url, body, successCallback) {
-    sendAjax(url, 'PUT', body, successCallback)
+function sendPutAjax (url, body, successCallback, errorCallback) {
+    sendAjax(url, 'PUT', body, successCallback, errorCallback)
 }
 
-function sendDeleteAjax (url, successCallback) {
-    sendAjax(url, 'DELETE', null, successCallback)
+function sendDeleteAjax (url, successCallback, errorCallback) {
+    sendAjax(url, 'DELETE', null, successCallback, errorCallback)
 }
 
-function sendAjax (url, method, body, successCallback) {
+function sendAjax (url, method, body, successCallback, errorCallback) {
     const param = {
         url,
         type: method,
@@ -29,6 +29,9 @@ function sendAjax (url, method, body, successCallback) {
         },
         error(xhr, status, error) {
             console.error("ERROR !", error)
+            if (errorCallback) {
+                errorCallback(error);
+            }
         }
     };
 

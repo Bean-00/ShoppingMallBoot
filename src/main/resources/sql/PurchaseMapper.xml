@@ -10,8 +10,8 @@
         <result property="paymentOption" column="payment_option" jdbcType="VARCHAR"/>
         <result property="receiverName" column="receiver_name" jdbcType="VARCHAR"/>
         <result property="receiverPhone" column="receiver_phone" jdbcType="VARCHAR"/>
-        <result property="divyAddr" column="dlvy_addr" jdbcType="VARCHAR"/>
-        <result property="divyRequest" column="dlvy_request" jdbcType="VARCHAR"/>
+        <result property="dlvyAddr" column="dlvy_addr" jdbcType="VARCHAR"/>
+        <result property="dlvyRequest" column="dlvy_request" jdbcType="VARCHAR"/>
         <result property="status" column="tran_status_code" jdbcType="VARCHAR"/>
         <result property="orderDate" column="order_date" jdbcType="DATE"/>
         <result property="dlvyDate" column="dlvy_date" jdbcType="DATE"/>
@@ -89,5 +89,12 @@
         SET TRAN_STATUS_CODE = TRAN_STATUS_CODE + 1
         WHERE PROD_NO = #{prodNo}
     </update>
+
+    <select id="getPurchase" parameterType="java.lang.Integer" resultMap="purchaseSelectMap">
+        SELECT
+            *
+        FROM transaction
+        WHERE TRAN_NO = #{tran_no}
+    </select>
 
 </mapper>

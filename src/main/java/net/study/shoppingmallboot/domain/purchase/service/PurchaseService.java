@@ -18,4 +18,6 @@ public interface PurchaseService {
     void addPurchase(Purchase purchase);
 
     void updateTransCode(int prodNo);
+
+    Purchase getPurchase(int tranNo);
 }

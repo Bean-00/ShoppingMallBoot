@@ -729,9 +729,17 @@ WHERE row_num BETWEEN 0 AND 12
 ORDER BY row_num;
 
 
-select * from TRANSACTION;
+select
+    tran_no,
+    prod_no,
 
-select * from TRANSACTION;
+from TRANSACTION;
+
+delete
+from TRANSACTION
+where prod_no = 10005;
+
+commit ;
 
 select * from users;
 
