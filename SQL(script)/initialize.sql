@@ -729,16 +729,6 @@ WHERE row_num BETWEEN 0 AND 12
 ORDER BY row_num;
 
 
-select
-    tran_no,
-    prod_no,
-
-from TRANSACTION;
-
-delete
-from TRANSACTION
-where prod_no = 10005;
-
 commit ;
 
 select * from users;
@@ -756,4 +746,13 @@ select * from users;
        prod_name
 FROM TRANSACTION T INNER JOIN USERS U on U.USER_ID = T.BUYER_ID
                     INNER JOIN PRODUCT P on T.prod_no = P.prod_no
-WHERE buyer_id = 'user01')
+WHERE buyer_id = 'user01');
+
+
+select * from transaction
+where tran_no = 10110;
+
+commit;
+
+select * from transaction
+where buyer_id = 'full';

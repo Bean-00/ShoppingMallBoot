@@ -69,5 +69,13 @@ public class PurchaseRestController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{tranNo}")
+    public ResponseEntity<Void> updatePurchase(@PathVariable int tranNo, @RequestBody Purchase purchase) {
+        purchase.setTranNo(tranNo);
+        purchaseService.updatePurchase(purchase);
+
+        return ResponseEntity.ok().build();
+    }
+
 
 }

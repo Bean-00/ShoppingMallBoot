@@ -50,4 +50,9 @@ public class PurchaseServiceImpl implements PurchaseService {
         return purchaseMapper.getPurchase(tranNo);
     }
 
+    @Override
+    public void updatePurchase(Purchase purchase) {
+        purchaseMapper.updatePurchase(purchase);
+    }
+
 }

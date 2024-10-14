@@ -21,4 +21,6 @@ public interface PurchaseMapper {
     void deletePurchase(int prodNo);
 
     Purchase getPurchase(int tranNo);
+
+    void updatePurchase(Purchase purchase);
 }

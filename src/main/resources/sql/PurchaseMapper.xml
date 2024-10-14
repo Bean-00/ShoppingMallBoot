@@ -53,7 +53,8 @@
                tran_status_code,
                prod_no,
                order_date,
-               prod_name
+               prod_name,
+               tran_no
         FROM (SELECT ROW_NUMBER() OVER (ORDER BY tran_no desc) AS row_num, buyer_id,
                      user_name,
                      cell_phone,
@@ -96,5 +97,16 @@
         FROM transaction
         WHERE TRAN_NO = #{tran_no}
     </select>
+
+    <update id="updatePurchase" parameterType="Purchase">
+        update TRANSACTION
+        set
+            RECEIVER_NAME = #{receiverName:VARCHAR},
+            RECEIVER_PHONE = #{receiverPhone:VARCHAR},
+            DLVY_ADDR = #{dlvyAddr:VARCHAR},
+            DLVY_REQUEST = #{dlvyRequest:VARCHAR},
+            DLVY_DATE = #{dlvyDate:DATE}
+        where tran_no = #{tranNo}
+    </update>
 
 </mapper>

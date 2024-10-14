@@ -6,7 +6,6 @@ import net.study.shoppingmallboot.domain.product.vo.Product;
 import net.study.shoppingmallboot.domain.product.vo.ProductStatus;
 import net.study.shoppingmallboot.domain.util.vo.Search;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

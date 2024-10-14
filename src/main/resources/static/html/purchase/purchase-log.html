@@ -165,7 +165,9 @@
                 </div>
                 <div class="modal-footer justify-content-between d-flex">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button id = "update-purchase-info-btn" type="button" class="btn btn-primary" data-bs-dismiss="modal">수정하기</button>
+                    <button id="update-purchase-info-btn" type="button" class="btn btn-outline-secondary"
+                            onclick="clickUpdatePurchaseInfoBtn()">수정하기
+                    </button>
                 </div>
             </div>
         </div>
@@ -201,27 +203,79 @@
             <td>${purchase.orderDate}</td>
             <td>${purchase.statusText}</td>
             <td>
-                <button id = "${purchase.purchaseId}-btn" class="btn btn-outline-dark" type="button" onclick="showPurchaseInfoModal(event)">보기</button>
+                <button id = "${purchase.tranNo}-btn" class="btn btn-outline-dark" type="button" onclick="showPurchaseInfoModal(event)">보기</button>
             </td></tr>`
         }
         $purchaseTbody.html(purchaseHtml);
     }
 
     const showPurchaseInfoModal = (event) => {
-        const purchaseId = event.target.id.slice(0, -4);
+        const tranNo = event.target.id.slice(0, -4);
+        console.log("tranNo", tranNo);
 
-        setPurchaseInfoModal(purchaseId);
+        setPurchaseInfoModal(tranNo);
         $("#purchase-modal-btn").click();
     }
 
-    const setPurchaseInfoModal = (buyerId = 'full') => {
-        sendGetAjax(`/api/purchases/?currentPage=1&buyerId=${buyerId}`, (res) => {
-            $("#input-receiver-name").val(res.purchaseId);
-            $("#input-phone").val(res.purchaseName);
-            $("#input-address").val(res.phone);
-            $("#input-delivery-request").val(res.email);
-            $("#input-delivery-date").val(res.address);
+    const setPurchaseInfoModal = (tranNo) => {
+        sendGetAjax(`/api/purchases/${tranNo}`, (res) => {
+            $("#input-receiver-name").val(res.receiverName);
+            $("#input-first-phone").val(res.phone1);
+            $("#input-middle-phone").val(res.phone2);
+            $("#input-last-phone").val(res.phone3);
+            $("#input-address").val(res.dlvyAddr);
+            $("#input-delivery-request").val(res.dlvyRequest);
+            $("#input-delivery-date").val(res.dlvyDate);
+            $("#update-purchase-info-btn").val('0');
+            $("#purchase-modal").val(res.tranNo);
+            addDisable();
         })
+    }
+
+    const elementIdArr = ['receiver-name', 'first-phone', 'middle-phone', 'last-phone', 'address', 'delivery-request', 'delivery-date'];
+
+    const removeDisable = () => {
+        for (let elementId of elementIdArr) {
+            $(`#input-${elementId}`).removeAttr("disabled");
+        }
+    }
+
+    const addDisable = () => {
+        for (let elementId of elementIdArr) {
+            $(`#input-${elementId}`).attr("disabled", "disabled");
+        }
+    }
+
+    const clickUpdatePurchaseInfoBtn = () => {
+        const $updatePurchaseInfoBtn = $("#update-purchase-info-btn");
+        if ($updatePurchaseInfoBtn.val() === '0') {
+            $updatePurchaseInfoBtn.removeClass("btn-outline-secondary")
+                .addClass("btn-outline-primary")
+                .text('수정 완료')
+                .val('1');
+            removeDisable();
+        } else {
+            $updatePurchaseInfoBtn.removeClass("btn-outline-primary")
+                .addClass("btn-outline-secondary")
+                .text('수정')
+                .val('0');
+            addDisable();
+            clickUpdateFinishBtn();
+        }
+
+    }
+
+    const clickUpdateFinishBtn = () => {
+        sendPutAjax(`/api/purchases/${$("#purchase-modal").val()}`,{
+            "receiverName": $("#input-receiver-name").val(),
+            "receiverPhone": `${$("#input-first-phone").val()}-${$("#input-middle-phone").val()}-${$("#input-last-phone").val()}`,
+            "dlvyAddr": $("#input-address").val(),
+            "dlvyRequest": $("#input-delivery-request").val(),
+            "dlvyDate": moment($("#input-delivery-date").val()),
+            "tranNo": $("#purchase-modal").val()
+        }, () => {
+            toastr.success("배송 정보 수정이 완료되었습니다.")
+        });
     }
 
     const changeSelectBtn = (event) => {
