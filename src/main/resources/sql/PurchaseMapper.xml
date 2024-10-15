@@ -68,7 +68,9 @@
               FROM TRANSACTION T
                        INNER JOIN USERS U on U.USER_ID = T.BUYER_ID
                        INNER JOIN PRODUCT P on T.prod_no = P.prod_no
+            <if test='#{buyerId} != ""'>
               WHERE buyer_id = #{buyerId})
+            </if>
         WHERE row_num Between #{startIndex} AND #{endIndex}
         ORDER BY row_num
     </select>

@@ -28,12 +28,12 @@ public class ViewController {
         return "user/user-management";
     }
 
-    @GetMapping("/myInformation")
+    @GetMapping("/my-information")
     public String myInformation() {
         return "user/myInfo";
     }
 
-    @GetMapping("/myPurchaseLog")
+    @GetMapping("/my-purchase-log")
     public String myPurchaseLog() {
         return "purchase/purchase-log";
     }
@@ -43,5 +43,15 @@ public class ViewController {
         return "product/purchase-product";
     }
 
+    @GetMapping("/add-new-product")
+    public String addNewProduct() {
+        return "product/add-new-product";
+    }
+    
+    @GetMapping("/purchase-management")
+    public String purchaseManagement() {
+        return "purchase/purchase-management";
+    }
+    
 
 }

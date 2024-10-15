@@ -81,35 +81,33 @@
     <div id="user-list-area" class="container-xxl container-lg" style="margin-top: 100px">
         <div class="col-12 justify-content-center d-flex" style="flex-wrap: wrap">
             <div class="col-10">
-                <h3 class="mx-auto p-2 mb-5" style="font-weight: bold; text-align: center;">회원정보 조회</h3>
-                <div class="col-12 justify-content-end d-flex">
-                    <div class="col-4 mb-3">
-                        <div class="input-group mb-3">
-                            <button id = "search-select-btn" class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">회원ID
-                            </button>
-                            <ul class="dropdown-menu" onclick="changeSelectBtn(event)">
-                                <li><a class="dropdown-item">회원ID</a></li>
-                                <li><a class="dropdown-item">회원명</a></li>
-                            </ul>
-                            <input id = "input-search" type="text" class="form-control" aria-label="Text input with dropdown button">
-                            <button class="btn btn-outline-secondary" type="button" id="button-addon2"
-                                    onclick="searchUserInfo(event)">검색</button>
-                        </div>
+                <h3 class="mx-auto p-2 mb-5" style="font-weight: bold; text-align: center;">판매 완료 상품 관리</h3>
+                <div class="col-12 justify-content-start d-flex" style="margin-bottom: 30px">
+                    <div class="col-xxl-2 col-lg-2 justify-content-start d-flex">
+                        <select id="filter-select" class="form-select" aria-label="Default select example"
+                                style="height: 52px; width: 6.8vw">
+                            <option selected>상품 상태</option>
+                            <option value="1">구매 완료</option>
+                            <option value="2">배송 중</option>
+                            <option value="3">배송 완료</option>
+                        </select>
                     </div>
+
                 </div>
 
                 <table class="table table-hover col-10">
                     <thead>
                     <tr>
                         <th scope="col">NO</th>
+                        <th scope="col">상품명</th>
                         <th scope="col">회원 ID</th>
-                        <th scope="col">회원명</th>
-                        <th scope="col">이메일</th>
+                        <th scope="col">주문 날짜</th>
+                        <th scope="col">배송 현황</th>
+                        <th scope="col">상품 상태 변경</th>
                         <th scope="col">상세 보기</th>
                     </tr>
                     </thead>
-                    <tbody id="user-tbody">
+                    <tbody id="purchase-list-tbody">
                     </tbody>
                 </table>
             </div>
@@ -118,13 +116,13 @@
 
 </div>
 
-<button id="user-modal-btn" hidden="hidden" data-bs-toggle="modal" data-bs-target="#user-modal">
+<button id="purchase-list-modal-btn" hidden="hidden" data-bs-toggle="modal" data-bs-target="#purchase-list-modal">
 </button>
-<div id="user-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div id="purchase-list-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-xl" role="document" style="margin-top: 100px">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">회원 상세 조회</h4>
+                <h4 class="modal-title" id="myModalLabel">상품 상세 조회</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -177,16 +175,16 @@
             () => $("#login-btn > i").removeClass("bi-door-closed").addClass("bi-door-open"),
             () => $("#login-btn > i").removeClass("bi-door-open").addClass("bi-door-closed")
         );
-        setUserTable();
+        setPurchaseListTable();
     });
 
-    const setUserTable = () => {
-        sendGetAjax('/api/users/', (res) => {
-            createUserTable(res);
+    const setPurchaseListTable = () => {
+        sendGetAjax('/api/products/', (res) => {
+            createPurchaseListTable(res);
         })
     }
 
-    const createUserTable = (res) => {
+    const createPurchaseListTable = (res) => {
         const $userTbody = $("#user-tbody");
         let userHtml = '';
         for (let user of res.userList) {
