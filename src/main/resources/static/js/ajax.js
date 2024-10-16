@@ -1,4 +1,22 @@
 
+function uploadAjax(formData) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/api/files/upload',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success(res) {
+               resolve(res);
+            },
+            error(xhr, status, error) {
+                reject(error);
+            }
+        })
+    })
+}
+
 function sendGetAjax (url, successCallback, errorCallback) {
     sendAjax(url, 'GET', null, successCallback, errorCallback)
 }
