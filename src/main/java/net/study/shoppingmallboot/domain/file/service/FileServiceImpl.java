@@ -1,10 +1,14 @@
 package net.study.shoppingmallboot.domain.file.service;
 
 
+import lombok.RequiredArgsConstructor;
+import net.study.shoppingmallboot.domain.file.dao.FileMapper;
 import net.study.shoppingmallboot.domain.file.vo.FileInfo;
+import net.study.shoppingmallboot.domain.user.vo.User;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -15,20 +19,22 @@ import java.util.UUID;
 
 
 @Service("fileService")
-
+@RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
 
+    private final FileMapper fileMapper;
     @Value("${file.upload-dir}")
     private String uploadDir;
 
     @Override
-    public List<FileInfo> uploadFiles(MultipartFile[] files) {
+    @Transactional
+    public List<FileInfo> uploadFiles(User owner, MultipartFile[] files) {
         List<FileInfo> fileInfoList = new ArrayList<>();
 
         for (MultipartFile multipartFile : files) {
             if (multipartFile.isEmpty()) continue;
 
-            FileInfo fileInfo = convertMultipartFileIntoFileInfo(multipartFile);
+            FileInfo fileInfo = convertMultipartFileIntoFileInfo(owner, multipartFile);
 
             File dir = new File(fileInfo.getFileDirPath());
 
@@ -43,12 +49,14 @@ public class FileServiceImpl implements FileService {
             }
             fileInfoList.add(fileInfo);
         }
-            //TODO: fileInfo DB insert insert 한 번에 진행. 1. bulk Insert mybatis의 for each 이용하거나, sql 만들어서 실행. 2. batch insert executeBatch connect 열고 대량으로 commit. seq id 세팅하는 mybatis 기능. 한 방에 리스트 전달해서 DB에 넣기. xml
+        for (FileInfo fileInfo : fileInfoList) {
+            fileMapper.insertFileInfo(fileInfo);
+        }
 
         return fileInfoList;
     }
 
-    private FileInfo convertMultipartFileIntoFileInfo(MultipartFile multipartFile) {
+    private FileInfo convertMultipartFileIntoFileInfo(User owner, MultipartFile multipartFile) {
 
         StringBuilder sysFileName = new StringBuilder();
         sysFileName.append(UUID.randomUUID());
@@ -61,6 +69,7 @@ public class FileServiceImpl implements FileService {
                 .fileSysName(sysFileName.toString())
                 .fileSize(multipartFile.getSize())
                 .fileMimeType(multipartFile.getContentType())
+                .fileUserId(owner.getUserId())
                 .build();
     }
 

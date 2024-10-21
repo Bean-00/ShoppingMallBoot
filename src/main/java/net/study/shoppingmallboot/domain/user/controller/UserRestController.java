@@ -76,15 +76,7 @@ public class UserRestController {
 
     @GetMapping("/login-user")
     public ResponseEntity<User> loginUser(HttpServletRequest request) {
-        Optional<String> sessionIdOpt = SessionUtil.getSessionId(request.getCookies());
-
-        if (!sessionIdOpt.isPresent() || !SessionUtil.containsSession(sessionIdOpt.get())) {
-            return ResponseEntity.ok(null);
-        }
-
-        User loginUser = (User)SessionUtil.getSession(sessionIdOpt.get()).getAttribute("loginUser");
-
-       return ResponseEntity.ok().body(loginUser);
+       return ResponseEntity.ok().body(SessionUtil.getLoginUser(request.getCookies()).orElse(null));
     }
 
     @GetMapping({"", "/"})

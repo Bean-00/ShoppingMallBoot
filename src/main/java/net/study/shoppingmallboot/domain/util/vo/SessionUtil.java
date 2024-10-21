@@ -3,6 +3,8 @@ package net.study.shoppingmallboot.domain.util.vo;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpSession;
+import net.study.shoppingmallboot.domain.user.vo.User;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -39,6 +41,7 @@ public class SessionUtil {
     public static Cookie createCookie(String name, String value) {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(60 * 60 * 24);
+        cookie.setPath("/");
 
         return cookie;
     }
@@ -56,5 +59,15 @@ public class SessionUtil {
 
         repository.get(sessionId).invalidate();
         repository.remove(sessionId);
+    }
+
+    public static Optional<User> getLoginUser(Cookie[] cookies) {
+        Optional<String> sessionIdOpt = SessionUtil.getSessionId(cookies);
+
+        if (!sessionIdOpt.isPresent() || !SessionUtil.containsSession(sessionIdOpt.get())) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable((User)SessionUtil.getSession(sessionIdOpt.get()).getAttribute("loginUser"));
     }
 }

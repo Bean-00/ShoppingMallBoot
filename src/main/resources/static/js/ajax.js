@@ -33,6 +33,10 @@ function sendDeleteAjax (url, successCallback, errorCallback) {
     sendAjax(url, 'DELETE', null, successCallback, errorCallback)
 }
 
+function sendPatchAjax (url, body, successCallback, errorCallback) {
+    sendAjax(url, 'PATCH', body, successCallback, errorCallback)
+}
+
 function sendAjax (url, method, body, successCallback, errorCallback) {
     const param = {
         url,

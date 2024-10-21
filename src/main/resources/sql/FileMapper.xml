@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.study.shoppingmallboot.domain.file.dao.FileMapper">
+
+    <insert id="insertFileInfo" parameterType="FileInfo" useGeneratedKeys="true" keyProperty="fileId">
+        <selectKey resultType ="int" order="BEFORE" keyProperty="fileId">
+            SELECT SEQ_FILES_FILE_ID.NEXTVAL FROM DUAL
+        </selectKey>
+            INSERT INTO FILES(FILE_ID, FILE_NAME, FILE_SYS_NAME, FILE_DIR_PATH, FILE_SIZE,
+            FILE_MIME_TYPE, FILE_USERID)
+            VALUES(#{fileId}, #{fileName}, #{fileSysName}, #{fileDirPath}, #{fileSize}, #{fileMimeType}, #{fileUserId})
+    </insert>
+
+</mapper>

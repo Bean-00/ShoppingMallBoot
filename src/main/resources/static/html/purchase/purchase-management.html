@@ -179,28 +179,37 @@
     });
 
     const setPurchaseListTable = () => {
-        sendGetAjax('/api/products/', (res) => {
+        sendGetAjax('/api/purchases/', (res) => {
             createPurchaseListTable(res);
         })
     }
 
     const createPurchaseListTable = (res) => {
-        const $userTbody = $("#user-tbody");
-        let userHtml = '';
-        for (let user of res.userList) {
-            userHtml += `<tr><th scope="row">${user.rowNum}</th>
-            <td>${user.userId}</td>
-            <td>${user.userName}</td>
-            <td>${user.email}</td>
+        const $purchaseListTbody = $("#purchase-list-tbody");
+        let purchaseHtml = '';
+        for (let purchase of res.purchaseList) {
+            purchaseHtml += `<tr><th scope="row">${purchase.rowNum}</th>
+            <td>${purchase.purchaseProd.prodName}</td>
+            <td>${purchase.buyer.userId}</td>
+            <td>${purchase.orderDate}</td>
+            <td>${purchase.statusText}</td>
             <td>
-                <button id = "${user.userId}-btn" class="btn btn-outline-dark" type="button" onclick="showUserInfoModal(event)">보기</button>
+                <button id = "${purchase.tranNo}-update-btn" class="btn btn-outline-dark" type="button" onclick="updateTranCode(event)">상태 업데이트</button>
+            </td>
+            <td>
+                <button id = "${purchase.tranNo}-btn" class="btn btn-outline-dark" type="button" onclick="showUserInfoModal(event)">보기</button>
             </td></tr>`
         }
-        $userTbody.html(userHtml);
+        $purchaseListTbody.html(purchaseHtml);
+    }
+
+    const updateTranCode = (event) => {
+        const tranNo = event.target.id.slice(0, -11);
+        sendPatchAjax(`/api/purchases?prodNo=${tranNo}`)
     }
 
     const showUserInfoModal = (event) => {
-        const userId = event.target.id.slice(0,-4);
+        const userId = event.target.id.slice(0, -4);
 
         setUserInfoModal(userId);
         $("#user-modal-btn").click();

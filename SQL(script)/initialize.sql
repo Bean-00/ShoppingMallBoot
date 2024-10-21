@@ -9,6 +9,7 @@ DROP SEQUENCE seq_transaction_tran_no;
 CREATE SEQUENCE seq_product_prod_no INCREMENT BY 1 START WITH 10000;
 CREATE SEQUENCE seq_transaction_tran_no INCREMENT BY 1 START WITH 10000;
 
+CREATE SEQUENCE seq_files_file_id INCREMENT BY 1 start with 1;
 
 CREATE TABLE users
 (
@@ -729,30 +730,45 @@ WHERE row_num BETWEEN 0 AND 12
 ORDER BY row_num;
 
 
-commit ;
+commit;
 
-select * from users;
+select *
+from users;
 
 
 (SELECT ROW_NUMBER() OVER (ORDER BY T.order_date) AS row_num,
-       buyer_id,
-       user_name,
-       cell_phone,
-       receiver_name,
-       receiver_phone,
-       tran_status_code,
-       P.prod_no,
-       order_date,
-       prod_name
-FROM TRANSACTION T INNER JOIN USERS U on U.USER_ID = T.BUYER_ID
-                    INNER JOIN PRODUCT P on T.prod_no = P.prod_no
-WHERE buyer_id = 'user01');
+        buyer_id,
+        user_name,
+        cell_phone,
+        receiver_name,
+        receiver_phone,
+        tran_status_code,
+        P.prod_no,
+        order_date,
+        prod_name
+ FROM TRANSACTION T
+          INNER JOIN USERS U on U.USER_ID = T.BUYER_ID
+          INNER JOIN PRODUCT P on T.prod_no = P.prod_no
+ WHERE buyer_id = 'user01');
 
 
-select * from transaction
-where tran_no = 10110;
+select *
+from transaction;
 
 commit;
 
-select * from transaction
+select *
+from transaction
 where buyer_id = 'full';
+
+select *
+from FILES;
+
+select *
+from USERS;
+
+SELECT *
+From PRODUCT;
+
+
+
