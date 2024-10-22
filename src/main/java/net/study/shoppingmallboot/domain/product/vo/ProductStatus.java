@@ -21,6 +21,7 @@ public class ProductStatus {
     private PurchaseStatus status;
     private int rowNum;
     private String fileName;
+    private int fileId;
 
     @JsonProperty("statusText")
     public String getStatusText() {

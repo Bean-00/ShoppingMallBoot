@@ -1,5 +1,6 @@
 package net.study.shoppingmallboot.domain.product.dao;
 
+import net.study.shoppingmallboot.domain.file.vo.FileInfo;
 import net.study.shoppingmallboot.domain.product.vo.Product;
 import net.study.shoppingmallboot.domain.product.vo.ProductStatus;
 import net.study.shoppingmallboot.domain.util.vo.Search;
@@ -25,4 +26,6 @@ public interface ProductMapper {
     void deleteProduct(String prodName);
 
     List<String> getProductNameList(String searchKeyword);
+
+    void insertProductFiles(Product product);
 }

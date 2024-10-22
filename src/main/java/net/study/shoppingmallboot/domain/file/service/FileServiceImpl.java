@@ -7,12 +7,17 @@ import net.study.shoppingmallboot.domain.file.vo.FileInfo;
 import net.study.shoppingmallboot.domain.user.vo.User;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -54,6 +59,17 @@ public class FileServiceImpl implements FileService {
         }
 
         return fileInfoList;
+    }
+
+    @Override
+    public Resource getFile(String imgName) {
+        Path path = Paths.get(uploadDir).resolve(imgName);
+        try {
+            Resource resource = new UrlResource(path.toUri());
+            return resource;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("file not exist");
+        }
     }
 
     private FileInfo convertMultipartFileIntoFileInfo(User owner, MultipartFile multipartFile) {

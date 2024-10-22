@@ -122,17 +122,17 @@
         try {
             const loginUser = await getLoginUser();
 
+            if (loginUser) {
+                window.location.href = '/';
+            }
             console.log("#####", loginUser);
+
         } catch (err) {
 
         }
     }
 
     init()
-
-    logout().then(() => {
-
-    });
 
     $(document).ready(function () {
         $("#login-btn").hover(
@@ -149,8 +149,12 @@
             userId,
             password
         }, (res) => {
-            if (res)
+            if (res){
                 toastr.success('로그인이 완료되었습니다.');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+            }
             else
                 toastr.error('아이디 혹은 비밀번호가 틀렸습니다.');
         })

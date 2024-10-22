@@ -12,9 +12,12 @@
         <result property="prodDetail" column="prod_detail" jdbcType="VARCHAR"/>
         <result property="manuDate" column="manufacture_day" jdbcType="VARCHAR"/>
         <result property="price" column="price" jdbcType="NUMERIC"/>
-        <result property="fileName" column="image_file" jdbcType="VARCHAR"/>
         <result property="regDate" column="reg_date" jdbcType="DATE"/>
         <result property="transCode" column="trans_code" jdbcType="NUMERIC"/>
+        <collection property="uploadedFiles" ofType="FileInfo">
+            <id property="fileId" column="file_id"/>
+            <result property="fileSysName" column="file_sys_name"/>
+        </collection>
     </resultMap>
 
     <delete id="deleteProduct" parameterType="java.lang.Integer">
@@ -23,21 +26,34 @@
         WHERE prod_no = #{prodNo}
     </delete>
 
-    <insert id="insertProduct" parameterType="Product">
+    <insert id="insertProduct" parameterType="Product" useGeneratedKeys="true" keyProperty="prodNo">
+        <selectKey resultType="int" order="BEFORE" keyProperty="prodNo">
+            SELECT seq_product_prod_no.nextval FROM DUAL
+        </selectKey>
         INSERT
-        INTO product(prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date)
-        VALUES (seq_product_prod_no.nextval,
-                #{prodName:VARCHAR},
-                #{prodDetail:VARCHAR},
-                #{manuDate:VARCHAR},
-                #{price:NUMERIC},
-                #{fileName:VARCHAR},
-                SYSDATE)
+        INTO product(prod_no, prod_name, prod_detail, manufacture_day, price, reg_date)
+        VALUES (#{prodNo},
+        #{prodName:VARCHAR},
+        #{prodDetail:VARCHAR},
+        #{manuDate:VARCHAR},
+        #{price:NUMERIC},
+        SYSDATE)
     </insert>
 
     <select id="getProductByProdNo" parameterType="java.lang.Integer" resultMap="productSelectMap">
-        SELECT *
-        FROM product
+        SELECT p.prod_no,
+               p.prod_name,
+               p.prod_detail,
+               p.manufacture_day,
+               p.price,
+               p.reg_date,
+               f.file_id,
+               f.file_sys_name
+        FROM product p
+                 left outer join (select f.file_id, file_sys_name, product_no
+                                  from files f
+                                           INNER JOIN file_product_map m on
+                                      f.file_id = m.file_id) f on p.prod_no = f.product_no
         WHERE prod_no = #{value}
     </select>
 
@@ -49,7 +65,6 @@
             prod_detail = #{prodDetail},
             manufacture_day = #{manuDate},
             price = #{price},
-            image_file = #{fileName},
             reg_date = #{regDate}
         </set>
         WHERE prod_no = #{prodNo}
@@ -62,10 +77,11 @@
         PT.price AS "price",
         PT.reg_date AS "regDate",
         PT.trans_code AS "status",
-        PT.image_file AS "fileName"
+        PT.file_id AS "fileId",
+        PT.file_sys_name AS "fileName"
         <choose>
             <when test="searchSorting == 0">
-                FROM (select ROW_NUMBER() over (ORDER BY p.PROD_NO) AS row_num,
+                FROM (select ROW_NUMBER() over (ORDER BY p.reg_date desc) AS row_num,
             </when>
             <when test="searchSorting == 1">
                 FROM (select ROW_NUMBER() over (ORDER BY p.PRICE) AS row_num,
@@ -78,9 +94,13 @@
         p.prod_name,
         p.price,
         p.reg_date,
-        p.image_file,
-        NVL(t.tran_status_code, 0) AS trans_code
+        NVL(t.tran_status_code, 0) AS trans_code,
+        f.file_id,
+        f.file_sys_name
         FROM product p
+        left outer join (select f.file_id, file_sys_name, product_no from files f
+        INNER JOIN file_product_map m on
+        f.file_id = m.file_id and m.upload_seq = 0) f on p.prod_no = f.product_no
         left outer join transaction t on p.PROD_NO = t.prod_no
         <where>
             <if test='searchKeyword != ""'>
@@ -111,8 +131,7 @@
     </select>
 
     <select id="getProductNameList" parameterType="String" resultType="String">
-        SELECT
-            prod_name
+        SELECT prod_name
         FROM product
         WHERE prod_name LIKE '${value}%'
         ORDER BY prod_name
@@ -152,6 +171,14 @@
         </where>
         ) TT
     </select>
+
+    <update id="insertProductFiles" parameterType="Product">
+        <foreach collection="uploadedFiles" item="file" index="index" separator=" " open="INSERT ALL"
+                 close="SELECT * FROM DUAL">
+            INTO FILE_PRODUCT_MAP(FILE_ID, PRODUCT_NO, UPLOAD_SEQ)
+            VALUES (#{file.fileId}, #{prodNo}, #{index})
+        </foreach>
+    </update>
 
 
 </mapper>

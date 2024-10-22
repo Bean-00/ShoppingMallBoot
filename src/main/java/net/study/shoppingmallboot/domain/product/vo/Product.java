@@ -1,8 +1,10 @@
 package net.study.shoppingmallboot.domain.product.vo;
 
 import lombok.*;
+import net.study.shoppingmallboot.domain.file.vo.FileInfo;
 
 import java.sql.Date;
+import java.util.List;
 
 
 @Getter
@@ -12,13 +14,13 @@ import java.sql.Date;
 @AllArgsConstructor
 public class Product {
 
-    private String fileName;
     private String manuDate;
     private int price;
     private String prodDetail;
     private String prodName;
     private int prodNo;
     private Date regDate;
+    private List<FileInfo> uploadedFiles;
 
     public void setManuDate(String manuDate) {
         String[] strArr = manuDate.split("-");
@@ -30,13 +32,6 @@ public class Product {
         }
 
         this.manuDate = sb.toString();
-    }
-
-    // Override
-    public String toString() {
-        return "ProductVO : [fileName]" + fileName
-                + "[manuDate]" + manuDate + "[price]" + price + "[prodDetail]" + prodDetail
-                + "[prodName]" + prodName + "[prodNo]" + prodNo;
     }
 
 }

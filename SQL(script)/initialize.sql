@@ -33,7 +33,6 @@ CREATE TABLE product
     prod_detail     VARCHAR2(200),
     manufacture_day VARCHAR2(8),
     price           NUMBER(10),
-    image_file      VARCHAR2(100),
     reg_date        DATE,
     PRIMARY KEY (prod_no)
 );
@@ -164,8 +163,8 @@ commit;
 
 ---------[기본 테이터 생성 부분]-----------
 
-insert into product(prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date)
-select seq_product_prod_no.nextval, prod_name, prod_detail, manufacture_day, price, image_file, reg_date
+insert into product(prod_no, prod_name, prod_detail, manufacture_day, price,  reg_date)
+select seq_product_prod_no.nextval, prod_name, prod_detail, manufacture_day, price, reg_date
 from product;
 
 commit;
@@ -690,14 +689,12 @@ SELECT PT.row_num    AS "rowNum",
        PT.prod_name  AS "productName",
        PT.price      AS "price",
        PT.reg_date   AS "regDate",
-       PT.trans_code AS "status",
-       PT.image_file AS "fileName"
+       PT.trans_code AS "status"
 FROM (select ROW_NUMBER() over (ORDER BY p.PROD_NO) AS row_num,
              p.prod_no,
              p.prod_name,
              p.price,
              p.reg_date,
-             p.image_file,
              NVL(t.tran_status_code, 0)             AS trans_code
       FROM product p
                left outer join transaction t on p.PROD_NO = t.prod_no
@@ -712,14 +709,12 @@ SELECT PT.row_num    AS "rowNum",
        PT.prod_name  AS "productName",
        PT.price      AS "price",
        PT.reg_date   AS "regDate",
-       PT.trans_code AS "status",
-       PT.image_file AS "fileName"
+       PT.trans_code AS "status"
 FROM (select ROW_NUMBER() over (ORDER BY p.price desc ) AS row_num,
              p.prod_no,
              p.prod_name,
              p.price,
              p.reg_date,
-             p.image_file,
              NVL(t.tran_status_code, 0)                 AS trans_code
       FROM product p
                left outer join transaction t on p.PROD_NO = t.prod_no
@@ -774,8 +769,19 @@ from FILES;
 select *
 from USERS;
 
-SELECT *
-From PRODUCT;
+ALTER TABLE PRODUCT DROP COLUMN IMAGE_FILE;
+
+select * from FILES
+order by file_id;
+
+SELECT * from FILE_PRODUCT_MAP;
+
+-- INSERT INTO FILE_PRODUCT_MAP(FILE_ID, PRODUCT_NO, UPLOAD_SEQ)
+-- SELECT 62, prod_no, 0 from PRODUCT where prod_no not in (10663, 10668)
+
+commit;
+
+
 
 
 

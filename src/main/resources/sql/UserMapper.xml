@@ -49,7 +49,6 @@
     <select id="loginUser" parameterType="User" resultMap="userSelectMap">
         SELECT user_id,
                user_name,
-               password,
                role,
                cell_phone,
                addr,

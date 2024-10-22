@@ -15,7 +15,6 @@ import java.util.Date;
 public class FileInfo {
     private int fileId;
     private String fileName;
-    @JsonIgnore
     private String fileSysName;
     @JsonIgnore
     private String fileDirPath;

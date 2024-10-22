@@ -148,6 +148,7 @@
 
 <script src="../js/ajax.js"></script>
 <script>
+    let uploadedFiles = [];
 
     $(document).ready(function () {
         $("#login-btn").hover(
@@ -167,8 +168,14 @@
         }
         try {
             const res = await uploadAjax(formData);
+            console.log(res);
+            uploadedFiles = [...uploadedFiles, ...res];
         } catch (err) {
-
+            if (err.message === 'UnAuthorization') {
+                alert('로그인이 필요한 기능입니다.');
+                window.location.href = '/login'
+            }
+            console.log("333")
         }
     }
 
@@ -200,7 +207,8 @@
             "price": $("#input-price").val(),
             "prodDetail": $("#input-detail").val(),
             "manuDate": $("#input-menu-date").val(),
-            "fileName": `${$("#input-email").val()}@${$("#emailDomainBtn").text()}`
+            "fileName": `${$("#input-email").val()}@${$("#emailDomainBtn").text()}`,
+            uploadedFiles
         };
 
         sendPostAjax('/api/products/', body, () => {

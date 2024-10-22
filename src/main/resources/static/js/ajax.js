@@ -11,7 +11,7 @@ function uploadAjax(formData) {
                resolve(res);
             },
             error(xhr, status, error) {
-                reject(error);
+                reject(xhr.respnseJSON);
             }
         })
     })
@@ -49,10 +49,10 @@ function sendAjax (url, method, body, successCallback, errorCallback) {
                 successCallback(res);
             }
         },
-        error(xhr, status, error) {
-            console.error("ERROR !", error)
+        error(xhr) {
+            console.error("ERROR !", xhr.responseJSON);
             if (errorCallback) {
-                errorCallback(error);
+                errorCallback(xhr.responseJSON);
             }
         }
     };
