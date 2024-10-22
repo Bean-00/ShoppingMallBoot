@@ -217,6 +217,10 @@
         console.log("tranNo", tranNo);
 
         setPurchaseInfoModal(tranNo);
+        $("#update-purchase-info-btn").removeClass("btn-outline-primary")
+            .addClass("btn-outline-secondary")
+            .text('수정')
+            .val('0');
         $("#purchase-modal-btn").click();
     }
 
