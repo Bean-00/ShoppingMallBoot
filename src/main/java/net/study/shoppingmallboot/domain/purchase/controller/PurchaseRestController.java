@@ -62,9 +62,9 @@ public class PurchaseRestController {
     }
 
     @PatchMapping({"", "/"})
-    public ResponseEntity<Void> updateTranCode(@RequestParam(name = "prodNo") int prodNo) {
+    public ResponseEntity<Void> updateTranCode(@RequestParam(name = "tranNo") int tranNo) {
 
-        purchaseService.updateTransCode(prodNo);
+        purchaseService.updateTransCode(tranNo);
 
         return ResponseEntity.ok().build();
     }

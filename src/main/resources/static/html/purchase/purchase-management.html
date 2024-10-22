@@ -17,6 +17,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+          integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+            integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
 </head>
@@ -104,7 +110,7 @@
                         <th scope="col">주문 날짜</th>
                         <th scope="col">배송 현황</th>
                         <th scope="col">상품 상태 변경</th>
-                        <th scope="col">상세 보기</th>
+<!--                        <th scope="col">상세 보기</th>-->
                     </tr>
                     </thead>
                     <tbody id="purchase-list-tbody">
@@ -164,6 +170,77 @@
     </div>
 </div>
 
+<button id="purchase-modal-btn" hidden="hidden" data-bs-toggle="modal" data-bs-target="#purchase-modal">
+</button>
+<div id="purchase-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xl" role="document" style="margin-top: 100px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">주문 상세 조회</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="justify-content-center d-flex">
+                    <div id="delivery-info-box" style="margin: 50px 0px">
+                        <h5 class="m-lg-2 pb-2" style="font-weight: bolder">배송 정보</h5>
+                        <label for="input-receiver-name" style="font-weight: bolder; margin-left: 3px">RECEIVER
+                            NAME</label>
+                        <div class="input-group mb-3 has-validation">
+                            <input id="input-receiver-name" class="login-input form-control" type="text"
+                                   placeholder="배송받으실 분 성함을 입력해주세요"/>
+                            <div id="feedback-receiver-name"></div>
+                        </div>
+
+                        <label for="input-first-phone" style="font-weight: bolder; margin-left: 3px">RECEIVER
+                            PHONE</label>
+                        <div class="input-group mb-3 has-validation">
+                            <div class="d-flex">
+                                <input id="input-first-phone" type="text" class="form-control" placeholder="010"
+                                       aria-label="phone1">
+                                <span class="input-group-text">-</span>
+                                <input id="input-middle-phone" type="text" class="form-control" placeholder="0000"
+                                       aria-label="phone2">
+                                <span class="input-group-text">-</span>
+                                <input id="input-last-phone" type="text" class="form-control" placeholder="0000"
+                                       aria-label="phone3">
+                            </div>
+                            <div id="feedback-phone"></div>
+                        </div>
+
+                        <label for="input-address"
+                               style="font-weight: bolder; margin-left: 3px">RECEIVER ADDRESS</label>
+                        <div id="input-group has-validation">
+                            <input id="input-address" class="login-input form-control" type="text"
+                                   placeholder="기본 주소를 입력해주세요"/>
+                            <div id="feedback-address"></div>
+                        </div>
+
+                        <label for="input-delivery-request"
+                               style="font-weight: bolder; margin-left: 3px; margin-top: 16px">RECEIVER REQUEST</label>
+                        <input id="input-delivery-request" class="login-input form-control" type="text"
+                               placeholder="배송 요청사항을 입력해주세요"/>
+
+                        <label for="input-delivery-request"
+                               style="font-weight: bolder; margin-left: 3px; margin-top: 16px">RECEIVER REQUEST
+                            DATE</label>
+                        <div id="input-group has-validation">
+                            <input id="input-delivery-date" class="login-input form-control" type="date"
+                                   placeholder="배송 요청일을 입력해주세요"/>
+                            <div id="feedback-delivery-date"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between d-flex">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button id="update-purchase-info-btn" type="button" class="btn btn-outline-secondary"
+                            onclick="clickUpdatePurchaseInfoBtn()">수정하기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 
 <script src="../js/ajax.js"></script>
@@ -192,60 +269,30 @@
             <td>${purchase.purchaseProd.prodName}</td>
             <td>${purchase.buyer.userId}</td>
             <td>${purchase.orderDate}</td>
-            <td>${purchase.statusText}</td>
-            <td>
-                <button id = "${purchase.tranNo}-update-btn" class="btn btn-outline-dark" type="button" onclick="updateTranCode(event)">상태 업데이트</button>
-            </td>
-            <td>
-                <button id = "${purchase.tranNo}-btn" class="btn btn-outline-dark" type="button" onclick="showUserInfoModal(event)">보기</button>
-            </td></tr>`
+            <td id="${purchase.tranNo}-status-text">${purchase.statusText}</td>
+            <td>`;
+            if (purchase.status === 'PURCHASED')
+                purchaseHtml += `<button id = "${purchase.tranNo}-update-btn" class="btn btn-outline-dark" type="button" onclick="updateTranCode(event)">배송 시작</button>`;
+            else
+               purchaseHtml +=  `<button id = "${purchase.tranNo}-update-btn" class="btn btn-outline-dark" type="button" disabled>배송 중</button>`;
+            purchaseHtml += `</td>
+            </tr>`
+            // <td>
+            //     <button id = "${purchase.tranNo}-btn" class="btn btn-outline-dark" type="button" onclick="showUserInfoModal(event)">보기</button>
+            // </td>
         }
         $purchaseListTbody.html(purchaseHtml);
     }
 
     const updateTranCode = (event) => {
         const tranNo = event.target.id.slice(0, -11);
-        sendPatchAjax(`/api/purchases?prodNo=${tranNo}`)
-    }
-
-    const showUserInfoModal = (event) => {
-        const userId = event.target.id.slice(0, -4);
-
-        setUserInfoModal(userId);
-        $("#user-modal-btn").click();
-    }
-
-    const setUserInfoModal = (userId) => {
-        sendGetAjax(`/api/users/${userId}`, (res) => {
-            $("#input-id").val(res.userId);
-            $("#input-name").val(res.userName);
-            $("#input-phone").val(res.phone);
-            $("#input-email").val(res.email);
-            $("#input-address").val(res.address);
+        sendPatchAjax(`/api/purchases?tranNo=${tranNo}`, null, () => {
+            toastr.success("상품 상태가 변동되었습니다.");
+            $(`#${tranNo}-status-text`).text("배송중");
+        }, () => {
+            toastr.error("상품 상태 변동 중 에러가 발생하였습니다.");
         })
     }
-
-    const changeSelectBtn = (event) => {
-        $searchSelectBtn.text(event.target.text);
-        $searchSelectBtn.val($searchSelectBtn.text() === '회원ID' ? 0 : 1);
-    }
-
-    const searchUserInfo = (event) => {
-        sendGetAjax('/api/users/' + buildProductQueryParam(1, $("#input-search").val(), $searchSelectBtn.val()), (res) => {
-            console.log("searchResult: ", res)
-            createUserTable(res);
-        })
-    }
-
-    const buildProductQueryParam = (currentPage, searchKeyword, searchCondition) => {
-        let queryParam = '?currentPage=' + currentPage;
-        if (searchKeyword)
-            queryParam += '&searchKeyword=' + searchKeyword;
-        if (searchCondition)
-            queryParam += '&searchCondition=' + searchCondition;
-        return queryParam;
-    }
-
 
 </script>
 </html>

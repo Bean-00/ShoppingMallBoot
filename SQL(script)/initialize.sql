@@ -753,7 +753,14 @@ from users;
 
 
 select *
-from transaction;
+from transaction
+WHERE buyer_id = 'full';
+
+
+
+update transaction
+SET TRAN_STATUS_CODE = 1
+WHERE PROD_NO = 10000;
 
 commit;
 
@@ -769,6 +776,8 @@ from USERS;
 
 SELECT *
 From PRODUCT;
+
+
 
 
 

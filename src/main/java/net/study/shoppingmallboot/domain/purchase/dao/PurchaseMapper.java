@@ -16,7 +16,7 @@ public interface PurchaseMapper {
 
     int getPurchaseTotalCount(String buyerId);
 
-    void updateTransCode(int prodNo);
+    void updateTransCode(int tranNo);
 
     void deletePurchase(int prodNo);
 

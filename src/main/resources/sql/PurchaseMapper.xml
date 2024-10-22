@@ -89,7 +89,7 @@
     <update id="updateTransCode" parameterType="java.lang.Integer">
         UPDATE TRANSACTION
         SET TRAN_STATUS_CODE = TRAN_STATUS_CODE + 1
-        WHERE PROD_NO = #{prodNo}
+        WHERE TRAN_NO = #{tranNo}
     </update>
 
     <select id="getPurchase" parameterType="java.lang.Integer" resultMap="purchaseSelectMap">
