@@ -17,9 +17,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+          integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+            integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
 </head>
@@ -115,6 +118,8 @@
                                    placeholder="배송 요청일을 입력해주세요"/>
                             <div id="feedback-delivery-date"></div>
                         </div>
+                        <div id = "update-delivery-field" style="width: 668px; margin-top: 16px; justify-content: end; display: flex;">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between d-flex">
@@ -145,6 +150,17 @@
         setPurchaseTable();
     });
 
+    const clickUpdateDeliveryStatusBtn = () => {
+        const tranNo = $("#purchase-modal").val();
+        sendPatchAjax(`/api/purchases?tranNo=${tranNo}`, null, () => {
+            toastr.success("다음에 또 이용해주세요 🫡");
+            $(`#${tranNo}-status`).text("배송완료");
+            $(`#update-delivery-status-btn`).attr("disabled", "disabled").text("도착완료");
+        }, () => {
+            toastr.error("배송 정보 업데이트 중 에러가 발생하였습니다.");
+        })
+    }
+
     const setPurchaseTable = async () => {
         const loginUser = await getLoginUser();
         if (!loginUser) {
@@ -164,7 +180,7 @@
             purchaseHtml += `<tr><th scope="row">${purchase.rowNum}</th>
             <td>${purchase.purchaseProd.prodName}</td>
             <td>${purchase.orderDate}</td>
-            <td>${purchase.statusText}</td>
+            <td id = "${purchase.tranNo}-status">${purchase.statusText}</td>
             <td>
                 <button id = "${purchase.tranNo}-btn" class="btn btn-outline-dark" type="button" onclick="showPurchaseInfoModal(event)">보기</button>
             </td></tr>`
@@ -217,6 +233,15 @@
         } else {
             $("#update-purchase-info-btn").removeAttr("disabled");
         }
+
+        if (status === 'DELIVERED') {
+            $("#update-delivery-status-btn").attr("disabled", "disabled").text("도착완료");
+            $("#update-delivery-field").empty();
+        } else {
+            $("#update-delivery-field").html("<button id=\"update-delivery-status-btn\" type=\"button\" class=\"btn btn-outline-primary\"\n" +
+                "onclick=\"clickUpdateDeliveryStatusBtn()\">상품 도착 확인\n" +
+                "</button>");
+        }
     }
 
     const clickUpdatePurchaseInfoBtn = () => {
@@ -239,7 +264,7 @@
     }
 
     const clickUpdateFinishBtn = () => {
-        sendPutAjax(`/api/purchases/${$("#purchase-modal").val()}`,{
+        sendPutAjax(`/api/purchases/${$("#purchase-modal").val()}`, {
             "receiverName": $("#input-receiver-name").val(),
             "receiverPhone": `${$("#input-first-phone").val()}-${$("#input-middle-phone").val()}-${$("#input-last-phone").val()}`,
             "dlvyAddr": $("#input-address").val(),
