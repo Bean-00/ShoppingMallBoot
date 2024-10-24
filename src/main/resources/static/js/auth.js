@@ -22,6 +22,8 @@ const logout = () => {
     return new Promise((resolve, reject) => {
         sendPostAjax("/api/users/logout", null, res => {
             sessionStorage.removeItem(LOGIN_USER_KEY);
+            alert('로그아웃 되었습니다.');
+            window.location.href = '/';
         }, err => {
             return reject(err);
         })

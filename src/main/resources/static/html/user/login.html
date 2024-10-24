@@ -33,56 +33,7 @@
 </style>
 <body>
 <div class="container-fluid" style="height: calc(88vh); margin-top: 10px">
-    <nav class="navbar bg-body-tertiary fixed-top">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-                    aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <a class="navbar-brand" href="/">
-                <img src="/images/ShoppingMallLogo.png" alt="" width="103.04" height="44">
-            </a>
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar"
-                 aria-labelledby="offcanvasNavbarLabel">
-                <div class="offcanvas-header">
-                    <a class="navbar-brand" href="/">
-                        <img src="/images/ShoppingMallLogo.png" alt="" width="103.04" height="44">
-                    </a>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                        <li class="nav-item">
-                            <p>비회원 메뉴</p>
-                            <a class="nav-link " aria-current="page" href="#">최근 본 상품</a>
-                            <a class="nav-link " aria-current="page" href="#">상품 검색</a>
-                        </li>
-                        <li class="nav-item">
-                            <p>마이페이지</p>
-                            <a class="nav-link " aria-current="page" href="/my-information">내 정보 조회</a>
-                            <a class="nav-link " aria-current="page" href="/my-purchase-log">구매 이력 조회</a>
-                        </li>
-                        <li class="nav-item">
-                            <p>상품 관리</p>
-                            <a class="nav-link " aria-current="page" href="/add-new-product">상품 등록</a>
-                            <a class="nav-link " aria-current="page" href="/purchase-management">판매 완료 상품 관리</a>
-                        </li>
-                        <li class="nav-item">
-                            <p>회원 관리</p>
-                            <a class="nav-link " aria-current="page" href="/user-management">가입 회원 정보 조회</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <button type="button" id="login-btn"
-                    class="justify-content-start align-items-center d-flex btn btn-outline-dark"
-                    onclick="location.href='/login'">
-                <i class="bi bi-door-closed fs-5 me-3"></i>
-                <a class="nav-link active" aria-current="page" href="/login">로그인</a>
-            </button>
-        </div>
-    </nav>
-
+    <div id="nav-bar"></div>
     <div id="login-field" class="container-xxl container-lg d-flex justify-content-center align-items-center"
          style="height: 100vh;">
         <div class="col-6 d-flex justify-content-center align-items-center border border-5 border-opacity-50 border-primary"
@@ -111,6 +62,7 @@
 
 <script src="../js/ajax.js"></script>
 <script src="../js/auth.js"></script>
+<script src="../js/menu.js"></script>
 <script>
     // getLoginUser().then(res => {
     //    console.log("#######", res);
@@ -135,6 +87,7 @@
     init()
 
     $(document).ready(function () {
+        viewNavbar('nav-bar');
         $("#login-btn").hover(
             () => $("#login-btn > i").removeClass("bi-door-closed").addClass("bi-door-open"),
             () => $("#login-btn > i").removeClass("bi-door-open").addClass("bi-door-closed")
@@ -153,7 +106,7 @@
                 toastr.success('로그인이 완료되었습니다.');
                 setTimeout(() => {
                     window.location.href = '/';
-                }, 1000);
+                }, 500);
             }
             else
                 toastr.error('아이디 혹은 비밀번호가 틀렸습니다.');

@@ -781,6 +781,23 @@ SELECT * from FILE_PRODUCT_MAP;
 
 commit;
 
+select * from files f inner join FILE_PRODUCT_MAP m
+         on f.file_id = m.file_id
+where product_no = 10668;
+
+select * from FILE_PRODUCT_MAP;
+
+select * from product;
+
+
+commit;
+
+select * from FILES
+where file_dir_path LIKE '%Dev%';
+
+
+select * from UserS;
+
 
 
 
