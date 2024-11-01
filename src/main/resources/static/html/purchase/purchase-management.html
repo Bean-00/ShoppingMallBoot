@@ -231,9 +231,9 @@
             <td id="${purchase.tranNo}-status-text">${purchase.statusText}</td>
             <td>`;
             if (purchase.status === 'PURCHASED')
-                purchaseHtml += `<button id = "${purchase.tranNo}-update-btn" class="btn btn-outline-dark" type="button" onclick="updateTranCode(event)">배송 시작</button>`;
+                purchaseHtml += `<button id = "${purchase.tranNo}-update-btn" class="btn btn-outline-dark" type="button" onclick="updateTranCode(event)">배송 요청</button>`;
             else
-               purchaseHtml +=  `<button id = "${purchase.tranNo}-update-btn" class="btn btn-outline-dark" type="button" disabled>배송 중</button>`;
+               purchaseHtml +=  `<button id = "${purchase.tranNo}-update-btn" class="btn btn-outline-dark" type="button" disabled>확인</button>`;
             purchaseHtml += `</td>
             </tr>`
         }
@@ -245,7 +245,7 @@
         sendPatchAjax(`/api/purchases?tranNo=${tranNo}`, null, () => {
             toastr.success("상품 상태가 변동되었습니다.");
             $(`#${tranNo}-status-text`).text("배송중");
-            $(`#${tranNo}-update-btn`).attr("disabled", "disabled").text("배송 중");
+            $(`#${tranNo}-update-btn`).attr("disabled", "disabled").text("확인");
         }, () => {
             toastr.error("상품 상태 변동 중 에러가 발생하였습니다.");
         })

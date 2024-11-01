@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,7 +48,8 @@ public class SessionUtil {
     }
 
      public static Optional<String> getCookieValue(Cookie[] cookies, String cookieName) {
-         return Arrays.stream(cookies)
+        if (Objects.isNull(cookies)) return Optional.empty();
+        return Arrays.stream(cookies)
                  .filter(cookie -> cookie.getName().equals(cookieName)
                          && !cookie.getValue().equals(""))
                  .findAny()

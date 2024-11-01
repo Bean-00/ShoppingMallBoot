@@ -1,2 +1,10 @@
 file:
   upload-dir: /Users/bean/Development/bean-upload
+
+server:
+  log:
+    path: /Users/bean/Development/logs
+
+spring:
+  pid:
+    file: /Users/bean/Development/pid/creme.pid

@@ -168,10 +168,6 @@
                         <div class="col-md-5 col-sm-4">
                             <input id="prod-menuDate" type="date" readonly class="form-control">
                         </div>
-<!--                        <label for="prod-fileName" class="col-md-1 col-sm-2 control-label">첨부 파일</label>-->
-<!--                        <div class="col-md-5 col-sm-4">-->
-<!--                            <input id="prod-fileName" type="text" readonly class="form-control">-->
-<!--                        </div>-->
                     </div>
                 </div>
             </div>
@@ -362,7 +358,7 @@
                   ${product.rowNum}
             </span>
             <div id = "file-name" class="image-box d-flex align-items-center" style="width: 262px; height: 262px">
-                <img src="/api/files/image/${product.fileName}" class="card-img-top" alt="상품 이미지">
+                <img src="/api/files/image/${product.fileName}" class="card-img-top" alt="상품 이미지" style="max-width: 100%; max-height: 100%; object-fit: contain;">
             </div>
             <div class="card-body">
                 <div class="align-content-around">
@@ -412,7 +408,7 @@
         let html = '';
 
         uploadedFiles.forEach((file, idx) => {
-                html += `<li class="splide__slide"><img src="/api/files/image/${file.fileSysName}" alt="상품이미지${idx}"></li>`
+                html += `<li class="splide__slide" style="display: flex; align-items: center"><img src="/api/files/image/${file.fileSysName}" alt="상품이미지${idx}"></li>`
         })
         $("#splide-ul").html(html);
 

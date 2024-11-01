@@ -1,0 +1,7 @@
+file:
+  upload-dir: /home/ec2-user/creme/uploadedFiles
+
+server:
+  port: 8080
+  log:
+    path: /home/ec2-user/creme/logs

@@ -798,9 +798,24 @@ where file_dir_path LIKE '%Dev%';
 
 select * from UserS;
 
+delete users
+where user_name = '멍청이';
+
+delete from PRODUCT
+WHERE prod_no = 10687;
+
+commit;
+
+-- INSERT INTO PRODUCT (prod_no, prod_name, prod_detail, manufacture_day, price, reg_date)
+-- SELECT () FROM PRODUCT;
+
+delete from transaction
+where tran_no = 10101;
+
+commit;
+
+commit;
 
 
-
-
-
-
+select * from product
+where prod_no = 10690;

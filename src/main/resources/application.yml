@@ -2,10 +2,10 @@ spring:
   datasource:
     hikari:
       maximum-pool-size: 10
-      driver-class-name: oracle.jdbc.driver.OracleDriver
-      jdbc-url: jdbc:oracle:thin:@129.154.220.177:1521:xe
-      username: scott
-      password: tiger
+      driver-class-name: ENC(XbJaB5lDMrdxnE/rR0MUPQvpNUUnY8awx2DHAKKPBwjPQdXCuIcP1Uad/xJUQh7h)
+      jdbc-url: ENC(uoLfb9E0hRTwftxkJCEIoZ44ijO4Rks6Up0kVwRFoyUcNnHuAA/BHkFCny03VlnySJBBu3WkY5wg3zTNlGs8pQ==)
+      username: ENC(r3equqi5pBtPNzBr9bM9oD5NtKQTCEXf)
+      password: ENC(AxoIEnkkPzj3KTbi7umU1luUHntMsDHH)
   application:
     name: ShoppingMallBoot
 
@@ -21,3 +21,10 @@ config:
 logging:
   level:
     root: DEBUG
+
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+    property:
+      prefix: ENC(
+      suffix: )
